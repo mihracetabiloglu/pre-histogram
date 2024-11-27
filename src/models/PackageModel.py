@@ -3,178 +3,111 @@ import numbers
 from pydantic import Field, validator
 from typing import List, Optional, Union, Any, Dict,Literal
 
-from sdks.novavision.src.base.model import Package,Input, Output, Images, Config, Inputs, Configs, Outputs, Response, Request
+from sdks.novavision.src.base.model import Package, Image, Param, Inputs, Configs, Outputs, Response, Request, Output, Input,Config
+
 
 
 class InputImage(Input):
     name: Literal["inputImage"] = "inputImage"
-    value: Images
-    type: Literal["Images"] = "Images"
+    value: Union[List[Image],Image]
+    type = "object"
 
-
-class ImageData(Output):
-    name: Literal["Imagedata"] = "Imagedata"
-    value: List
-    type: Literal["list"] = "list"
-    field: Literal["data"] = "data"
-
-class OutputData(Output):
-    name: Literal["OutputData"] = "OutputData"
-    value: ImageData
-    type: Literal["list"] = "list"
-    field: Literal["data"] = "data"
-
-
-class configTypeSegmentation(Config):
-    name: Literal["segmentation"] = "segmentation"
-    value: Literal["segmentation"] = "segmentation"
-    type: Literal["string"] = "string"
-    field: Literal["option"] = "option"
-
+    @validator("type", pre=True, always=True)
+    def set_type_based_on_value(cls, value, values):
+        value = values.get('value')
+        if isinstance(value, Image):
+            return "object"
+        elif isinstance(value, list):
+            return "list"
     class Config:
-        title = "Segmentation"
+        title = "Image"
 
 
-class ConfigType(Config):
-    name: Literal["configType"] = "configType"
-    value:Union[configTypeSegmentation]
-    type: Literal["object"] = "object"
-    field: Literal["dropdownlist"] = "dropdownlist"
+class OutputImage(Output):
+    name: Literal["outputImage"] = "outputImage"
+    value: Union[List[Image],Image]
+    type = "object"
 
+    @validator("type", pre=True, always=True)
+    def set_type_based_on_value(cls, value, values):
+        value = values.get('value')
+        if isinstance(value, Image):
+            return "object"
+        elif isinstance(value, list):
+            return "list"
     class Config:
-        title = "Type"
+        title = "Image"
 
+class Percent(Config):
+    """
+        The image is resized preserving the aspect ratio.
+    """
+    name: Literal["Percent"] = "Percent"
+    value: int = Field(ge=10, le=500, default=100)
+    type: Literal["number"] = "number"
+    field: Literal["textInput"] = "textInput"
+    placeHolder: Literal["[10-500]"] = "[10-500]"
+    class Config:
+        title="Percentage (%)"
 
-
-class SegmentationInputs(Inputs):
+class ScalingInputs(Inputs):
     inputImage: InputImage
 
 
-
-class SegmentationConfigs(Configs):
-    configType: ConfigType
-
+class ScalingConfigs(Configs):
+    percent: Percent
 
 
-class SegmentationOutputs(Outputs):
-    OutputData: OutputData
+class ScalingOutputs(Outputs):
+    outputImage: OutputImage
 
 
-
-
-class SegmentationRequest(Request):
-    inputs: Optional[SegmentationInputs]
-    configs: SegmentationConfigs
+class ScalingRequest(Request):
+    inputs: Optional[ScalingInputs]
+    configs: ScalingConfigs
     class Config:
         schema_extra = {
             "target": "configs"
         }
 
 
-class SegmentationResponse(Response):
-    outputs: SegmentationOutputs
+class ScalingResponse(Response):
+    outputs: ScalingOutputs
 
 
-
-class SegmentationExecutor(Config):
-    name: Literal["Segmentation"] = "Segmentation"
-    value: Union[SegmentationRequest, SegmentationResponse]
+class ScalingExecutor(Config):
+    name: Literal["Scaling"] = "Scaling"
+    value: Union[ScalingRequest, ScalingResponse]
     type: Literal["object"] = "object"
     field: Literal["option"] = "option"
 
     class Config:
-        title = "Segmentation"
+        title = "Scaling"
         schema_extra = {
             "target": {
                 "value": 0
             }
         }
-
-
-class TrainOutputs(Outputs):
-    OutputData: OutputData
-
-
-
-class TrainResponse(Response):
-    outputs: TrainOutputs
-
-
-
-class BatchSize(Config):
-    name: Literal["BatchSize"] = "BatchSize"
-    value: int = Field(ge=1, le=100)
-    type: Literal["number"] = "number"
-    field: Literal["textInput"] = "textInput"
-
-    class Config:
-        title = "Batch Size"
-
-
-
-class Path(Config):
-    name: Literal["path"] = "path"
-    value: str
-    type: Literal["string"] = "string"
-    field: Literal["textInput"] = "textInput"
-
-    class Config:
-        title = "Path"
-
-
-
-
-
-class TrainConfigs(Configs):
-    configPath:Path
-    batchSize: BatchSize
-
-class TrainRequest(Request):
-    configs: TrainConfigs
-
-    class Config:
-        schema_extra = {
-            "target": "configs"
-        }
-
-
-class TrainExecutor(Config):
-    name: Literal["Train"] = "Train"
-    value: Union[TrainRequest, TrainResponse]
-    type: Literal["object"] = "object"
-    field: Literal["option"] = "option"
-
-    class Config:
-        title = "Train"
-        schema_extra = {
-            "target": {
-                "value": 0
-            }
-        }
-
-
 
 class ConfigExecutor(Config):
     name: Literal["ConfigExecutor"] = "ConfigExecutor"
-    value: Union[SegmentationExecutor,TrainExecutor]
-    type:Literal["executor"] = "executor"
+    value: Union[ScalingExecutor]
+    type: Literal["executor"] = "executor"
     field: Literal["dependentDropdownlist"] = "dependentDropdownlist"
 
     class Config:
-        title = "Task",
+        title = "Task"
         schema_extra = {
             "target": "value"
-
         }
+
 
 class PackageConfigs(Configs):
     executor: ConfigExecutor
 
 
 class PackageModel(Package):
-    type: Literal["capsule"] ="capsule"
-    name : Literal["Segmentation"] = "Segmentation"
-    uID = "1221112"
     configs: PackageConfigs
-
-
+    type: Literal["component"] = "component"
+    name: Literal["Scaling"] = "Scaling"
+    uID = "1221112"

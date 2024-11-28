@@ -1,6 +1,7 @@
 """
-Image to RGB channel histogram data representation.   
+Image to RGB channel histogram data.   
 """
+
 import os
 import sys
 import cv2
@@ -15,3 +16,6 @@ from sdks.novavision.src.helper.executor import Executor
 from components.Brightness.src.utils.response import build_response
 from components.Brightness.src.models.PackageModel import PackageModel
 
+class Histogram(Component):
+    def __init__(response, ):
+        pass

@@ -23,7 +23,7 @@ class InputImage(Input):
         title = "Image"
 
 
-class OutputImage(Output):
+class OutputArray(Output):
     name: Literal["outputImage"] = "outputImage"
     value: Union[List[Image],Image]
     type = "object"
@@ -49,6 +49,7 @@ class Percent(Config):
     placeHolder: Literal["[10-500]"] = "[10-500]"
     class Config:
         title="Percentage (%)"
+
 
 class ScalingInputs(Inputs):
     inputImage: InputImage

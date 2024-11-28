@@ -1,11 +1,9 @@
 import numbers
 
 from pydantic import Field, validator
-from typing import List, Optional, Union, Any, Dict,Literal
+from typing import List, Optional, Union, Any, Dict, Literal
 
 from sdks.novavision.src.base.model import Package, Image, Param, Inputs, Configs, Outputs, Response, Request, Output, Input,Config
-
-
 
 class InputImage(Input):
     name: Literal["inputImage"] = "inputImage"
@@ -22,68 +20,127 @@ class InputImage(Input):
     class Config:
         title = "Image"
 
+class OutputData(Output):
+    name: Literal["outputData"] = "outputData"
+    value: List
+    type: Literal["list"] = "list"
 
-class OutputArray(Output):
-    name: Literal["outputImage"] = "outputImage"
-    value: Union[List[Image],Image]
-    type = "object"
-
-    @validator("type", pre=True, always=True)
-    def set_type_based_on_value(cls, value, values):
-        value = values.get('value')
-        if isinstance(value, Image):
-            return "object"
-        elif isinstance(value, list):
-            return "list"
-    class Config:
-        title = "Image"
-
-class Percent(Config):
-    """
-        The image is resized preserving the aspect ratio.
-    """
-    name: Literal["Percent"] = "Percent"
-    value: int = Field(ge=10, le=500, default=100)
+class PixelMin(Config):
+    name: Literal["PixelMin"] = "PixelMin"
+    value: int = Field(ge=0, le=255, default=0)
     type: Literal["number"] = "number"
     field: Literal["textInput"] = "textInput"
-    placeHolder: Literal["[10-500]"] = "[10-500]"
+    placeHolder: Literal["[0-255]"] = "[0-255]"
     class Config:
-        title="Percentage (%)"
+        title="Pixel Minimum Value"
 
+class PixelMax(Config):
+    name: Literal["PixelMax"] = "PixelMax"
+    value: int = Field(ge=0, le=255, default=255)
+    type: Literal["number"] = "number"
+    field: Literal["textInput"] = "textInput"
+    placeHolder: Literal["[0-255]"] = "[0-255]"
+    class Config:
+        title="Pixel Maximum Value"
 
-class ScalingInputs(Inputs):
+class ChannelRed(Config):
+    name: Literal["True"] = "True"
+    value: Literal[True] = True
+    type: Literal["bool"] = "bool"
+    field: Literal["option"] = "option"
+    class Config:
+        title="Red Channel"
+
+class ChannelGreen(Config):
+    name: Literal["True"] = "True"
+    value: Literal[True] = True
+    type: Literal["bool"] = "bool"
+    field: Literal["option"] = "option"
+    class Config:
+        title="Green Channel"
+
+class ChannelBlue(Config):
+    name: Literal["True"] = "True"
+    value: Literal[True] = True
+    type: Literal["bool"] = "bool"
+    field: Literal["option"] = "option"
+    class Config:
+        title="Blue Channel"
+
+class ChannelGrayScale(Config):
+    name: Literal["True"] = "True"
+    value: Literal[True] = True
+    type: Literal["bool"] = "bool"
+    field: Literal["option"] = "option"
+    class Config:
+        title="Gray Scale Channel"
+
+class HistogramInputs(Inputs):
     inputImage: InputImage
 
+class HistogramMaskInputs(Inputs):
+    inputImage: InputImage
+    inputMask: InputImage
 
-class ScalingConfigs(Configs):
-    percent: Percent
+class HistogramOutputs(Outputs):
+    outputData: OutputData
 
+class HistogramConfigs(Configs):
+    channelRed : ChannelRed
+    channelGreen : ChannelGreen
+    channelBlue : ChannelBlue
+    channelGrayScale : ChannelGrayScale
+    pixelMin : PixelMin
+    pixelMax : PixelMax
 
-class ScalingOutputs(Outputs):
-    outputImage: OutputImage
-
-
-class ScalingRequest(Request):
-    inputs: Optional[ScalingInputs]
-    configs: ScalingConfigs
+class HistogramRequest(Request):
+    inputs: Optional[HistogramInputs]
+    configs: HistogramConfigs
     class Config:
         schema_extra = {
             "target": "configs"
         }
 
+class HistogramMaskRequest(Request):
+    inputs: Optional[HistogramMaskInputs]
+    configs: HistogramConfigs
+    class Config:
+        schema_extra = {
+            "target": "configs"
+        }
 
-class ScalingResponse(Response):
-    outputs: ScalingOutputs
+class HistogramResponse(Response):
+    outputs: HistogramOutputs
 
-
-class ScalingExecutor(Config):
-    name: Literal["Scaling"] = "Scaling"
-    value: Union[ScalingRequest, ScalingResponse]
+class HistogramExecutor(Config):
+    """
+        Image to histogram list by channels.
+    """
+    name: Literal["Histogram"] = "Histogram"
+    value: Union[HistogramRequest, HistogramResponse]
     type: Literal["object"] = "object"
     field: Literal["option"] = "option"
 
     class Config:
-        title = "Scaling"
+        title = "Histogram"
+        schema_extra = {
+            "target": {
+                "value": 0
+            }
+        }
+
+
+class HistogramMaskExecutor(Config):
+    """
+        Image to histogram list by channels, with Mask.
+    """
+    name: Literal["Histogram"] = "Histogram"
+    value: Union[HistogramMaskRequest, HistogramResponse]
+    type: Literal["object"] = "object"
+    field: Literal["option"] = "option"
+
+    class Config:
+        title = "HistogramMask"
         schema_extra = {
             "target": {
                 "value": 0
@@ -92,7 +149,7 @@ class ScalingExecutor(Config):
 
 class ConfigExecutor(Config):
     name: Literal["ConfigExecutor"] = "ConfigExecutor"
-    value: Union[ScalingExecutor]
+    value: Union[HistogramExecutor, HistogramMaskExecutor]
     type: Literal["executor"] = "executor"
     field: Literal["dependentDropdownlist"] = "dependentDropdownlist"
 
@@ -102,13 +159,11 @@ class ConfigExecutor(Config):
             "target": "value"
         }
 
-
 class PackageConfigs(Configs):
     executor: ConfigExecutor
-
 
 class PackageModel(Package):
     configs: PackageConfigs
     type: Literal["component"] = "component"
-    name: Literal["Scaling"] = "Scaling"
+    name: Literal["Histogram"] = "Histogram"
     uID = "1221112"

@@ -35,6 +35,29 @@ def img2histogram(image):
         'blue': histogram_blue
     }
 
+def plot_histogram(histograms):
+    """
+    Plot the RGB histograms.
+    
+    Args:
+        histograms (dict): Dictionary containing 'red', 'green', and 'blue' histograms.
+    """
+    plt.figure(figsize=(10, 6))
+    
+    # Plot each channel's histogram
+    plt.plot(histograms['red'], color='red', label='Red Channel')
+    plt.plot(histograms['green'], color='green', label='Green Channel')
+    plt.plot(histograms['blue'], color='blue', label='Blue Channel')
+    
+    # Add labels and title
+    plt.title('RGB Histogram')
+    plt.xlabel('Pixel Intensity')
+    plt.ylabel('Frequency')
+    plt.legend()
+    plt.grid(True)
+    
+    # Show the plot
+    plt.show()
 
 if __name__ == "__main__":
     script_dir = os.path.dirname(__file__)
@@ -42,5 +65,4 @@ if __name__ == "__main__":
     relative_path = os.path.join(script_dir, image_path)
     image = cv2.imread(relative_path) 
 
-    hist = img2histogram(image)
-    print("Histogram:", hist)
+    plot_histogram(img2histogram(image))

@@ -20,9 +20,24 @@ class InputImage(Input):
     class Config:
         title = "Image"
 
+class OutputImage(Output):
+    name: Literal["outputImage"] = "outputImage"
+    value: Union[List[Image],Image]
+    type = "object"
+
+    @validator("type", pre=True, always=True)
+    def set_type_based_on_value(cls, value, values):
+        value = values.get('value')
+        if isinstance(value, Image):
+            return "object"
+        elif isinstance(value, list):
+            return "list"
+    class Config:
+        title = "Image"
+
 class OutputData(Output):
     name: Literal["outputData"] = "outputData"
-    value: List
+    value: List[List]
     type: Literal["list"] = "list"
 
 class PixelMin(Config):
@@ -75,6 +90,14 @@ class ChannelGrayScale(Config):
     class Config:
         title="Gray Scale Channel"
 
+class PlotImage(Config):
+    name: Literal["False"] = "False"
+    value: Literal[False] = False
+    type: Literal["bool"] = "bool"
+    field: Literal["option"] = "option"
+    class Config:
+        title="Generate Plot Image"
+
 class HistogramInputs(Inputs):
     inputImage: InputImage
 
@@ -84,6 +107,7 @@ class HistogramMaskInputs(Inputs):
 
 class HistogramOutputs(Outputs):
     outputData: OutputData
+    outputImage: OutputImage
 
 class HistogramConfigs(Configs):
     channelRed : ChannelRed
@@ -92,6 +116,7 @@ class HistogramConfigs(Configs):
     channelGrayScale : ChannelGrayScale
     pixelMin : PixelMin
     pixelMax : PixelMax
+    plotImage : PlotImage
 
 class HistogramRequest(Request):
     inputs: Optional[HistogramInputs]
@@ -129,7 +154,6 @@ class HistogramExecutor(Config):
             }
         }
 
-
 class HistogramMaskExecutor(Config):
     """
         Image to histogram list by channels, with Mask.
@@ -140,7 +164,7 @@ class HistogramMaskExecutor(Config):
     field: Literal["option"] = "option"
 
     class Config:
-        title = "HistogramMask"
+        title = "HistograMask"
         schema_extra = {
             "target": {
                 "value": 0

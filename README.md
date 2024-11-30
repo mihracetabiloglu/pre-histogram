@@ -1,2 +1,3 @@
-# capsule
-Capsule for NOVAVISION
+# pre-histogram
+
+NovaVision Histogram Component

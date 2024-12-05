@@ -29,9 +29,9 @@ class Histogram(Component):
         super.__init__(request)
         self.request.model = PackageModel(**(self.request.data))
         self.initialize_request_data(request=request, bootstrap=bootstrap)
+        self.image = self.request.get_param("inputImage")
         self.pixelMin = self.request.get_param("pixelMin")
         self.pixelMax = self.request.get_param("pixelMax")
-        self.image = self.request.get_param("inputImage")
         self.channels = []        
         self.load_param()
 

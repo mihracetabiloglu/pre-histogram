@@ -18,6 +18,13 @@ from components.Histogram.src.utils.response import build_response
 from components.Histogram.src.models.PackageModel import PackageModel
 
 class Histogram(Component):
+    """
+    This class initializes the configuration for computing image histograms, 
+    including RGB and Grayscale channels. It processes the input image, extracts 
+    histogram data for selected channels, and optionally generates a matplotlib plot 
+    as an image representation. 
+    """
+
     def __init__(self, request, bootstrap):
         super.__init__(request)
         self.request.model = PackageModel(**(self.request.data))
@@ -27,14 +34,14 @@ class Histogram(Component):
         self.channelBlue = self.request.get_param("channelBlue")
         self.channelGrayScale = self.request.get_param("channelGrayScale")
         self.pixelMin = self.request.get_param("pixelMin")
-        self.pixelMax = self.request.get_param("pixelMaxs")
+        self.pixelMax = self.request.get_param("pixelMax")
         self.plotImage = self.request.get_param("plotImage")
         self.image = self.request.get_param("inputImage")
 
         self.channels = []        
-        if self.channelRed   : self.channels.append(0)
-        if self.channelGreen : self.channels.append(1)
-        if self.channelBlue  : self.channels.append(2)        
+        if self.channelRed.value   : self.channels.append(0)
+        if self.channelGreen.value : self.channels.append(1)
+        if self.channelBlue.value  : self.channels.append(2)        
 
     @staticmethod
     def bootstrap() -> dict:
@@ -45,10 +52,10 @@ class Histogram(Component):
         if not img: return None
         
         """ RGB & GrayScale Data Output : list[list[float]] """
-        self.out = self.img2hist(self.image.value, self.channels, self.channelGrayScale, self.pixelMin, self.pixelMax)
+        self.out = self.img2hist(self.image.value, self.channels, self.channelGrayScale.value, self.pixelMin.value, self.pixelMax.value)
         
         """ MathPlot Image Generation : If plot image checkbox checked """
-        if self.plotImage: 
+        if self.plotImage.value: 
             self.image.value = self.hist2plot(self.out)
             self.image = Image.set_frame(img=img, package_uID=self.uID, redis_db=self.redis_db)
         

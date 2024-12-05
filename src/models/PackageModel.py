@@ -1,8 +1,6 @@
 import numbers
-
 from pydantic import Field, validator
 from typing import List, Optional, Union, Any, Dict, Literal
-
 from sdks.novavision.src.base.model import Package, Image, Param, Inputs, Configs, Outputs, Response, Request, Output, Input,Config
 
 class InputImage(Input):
@@ -20,6 +18,11 @@ class InputImage(Input):
     class Config:
         title = "Image"
 
+class OutputData(Output):
+    name: Literal["outputData"] = "outputData"
+    value: List[List]
+    type: Literal["list"] = "list"
+
 class OutputImage(Output):
     name: Literal["outputImage"] = "outputImage"
     value: Union[List[Image],Image]
@@ -34,11 +37,6 @@ class OutputImage(Output):
             return "list"
     class Config:
         title = "Image"
-
-class OutputData(Output):
-    name: Literal["outputData"] = "outputData"
-    value: List[List]
-    type: Literal["list"] = "list"
 
 class PixelMin(Config):
     name: Literal["PixelMin"] = "PixelMin"
@@ -101,14 +99,6 @@ class PlotImage(Config):
 class HistogramInputs(Inputs):
     inputImage: InputImage
 
-class HistogramMaskInputs(Inputs):
-    inputImage: InputImage
-    inputMask: InputImage
-
-class HistogramOutputs(Outputs):
-    outputData: OutputData
-    outputImage: OutputImage
-
 class HistogramConfigs(Configs):
     channelRed : ChannelRed
     channelGreen : ChannelGreen
@@ -118,16 +108,12 @@ class HistogramConfigs(Configs):
     pixelMax : PixelMax
     plotImage : PlotImage
 
+class HistogramOutputs(Outputs):
+    outputData: OutputData
+    outputImage: OutputImage
+
 class HistogramRequest(Request):
     inputs: Optional[HistogramInputs]
-    configs: HistogramConfigs
-    class Config:
-        schema_extra = {
-            "target": "configs"
-        }
-
-class HistogramMaskRequest(Request):
-    inputs: Optional[HistogramMaskInputs]
     configs: HistogramConfigs
     class Config:
         schema_extra = {
@@ -138,9 +124,6 @@ class HistogramResponse(Response):
     outputs: HistogramOutputs
 
 class HistogramExecutor(Config):
-    """
-        Image to histogram list by channels.
-    """
     name: Literal["Histogram"] = "Histogram"
     value: Union[HistogramRequest, HistogramResponse]
     type: Literal["object"] = "object"
@@ -154,26 +137,9 @@ class HistogramExecutor(Config):
             }
         }
 
-class HistogramMaskExecutor(Config):
-    """
-        Image to histogram list by channels, with Mask.
-    """
-    name: Literal["Histogram"] = "Histogram"
-    value: Union[HistogramMaskRequest, HistogramResponse]
-    type: Literal["object"] = "object"
-    field: Literal["option"] = "option"
-
-    class Config:
-        title = "HistograMask"
-        schema_extra = {
-            "target": {
-                "value": 0
-            }
-        }
-
 class ConfigExecutor(Config):
     name: Literal["ConfigExecutor"] = "ConfigExecutor"
-    value: Union[HistogramExecutor, HistogramMaskExecutor]
+    value: Union[HistogramExecutor]
     type: Literal["executor"] = "executor"
     field: Literal["dependentDropdownlist"] = "dependentDropdownlist"
 

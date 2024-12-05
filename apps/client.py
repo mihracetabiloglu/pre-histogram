@@ -7,6 +7,8 @@ import cv2
 import json
 from components.Histogram.src.models.PackageModel import PackageConfigs,ConfigExecutor,PackageModel,HistogramExecutor,HistogramInputs,HistogramConfigs,HistogramRequest,InputImage
 from components.Histogram.src.models.PackageModel import ChannelRed, ChannelGreen, ChannelBlue, ChannelGrayScale, PixelMin, PixelMax, PlotImage
+from components.Histogram.src.models.PackageModel import ChannelRedTrue, ChannelGreenTrue, ChannelBlueTrue, ChannelGrayScaleTrue, PlotImageTrue, ChannelRedFalse, ChannelGreenFalse, ChannelBlueFalse, ChannelGrayScaleFalse, PlotImageFalse
+
 
 from sdks.novavision.src.base.model import Image,  Request
 from sdks.novavision.src.media.image import Image as image
@@ -26,13 +28,21 @@ def infer():
     image_obj = image.encode64(image_obj)
     inputImage = InputImage(value=image_obj)
 
-    channelRed = ChannelRed(value=True)
-    channelBlue = ChannelBlue(value=True)
-    channelGreen = ChannelGreen(value=True)
-    channelGrayScale = ChannelGrayScale(value=True)
+    channelRedTrue = ChannelRedTrue(value="True")
+    channelGreenTrue = ChannelGreenTrue(value="True")
+    channelBlueTrue = ChannelBlueTrue(value="True")
+    channelGrayScaleTrue = ChannelGrayScaleTrue(value="True")
+
+    channelRed = ChannelRed(value=channelRedTrue)
+    channelBlue = ChannelBlue(value=channelBlueTrue)
+    channelGreen = ChannelGreen(value=channelGreenTrue)
+    channelGrayScale = ChannelGrayScale(value=channelGrayScaleTrue)
+
     pixelMin = PixelMin(value=0)
     pixelMax = PixelMax(value=255)
-    plotImage = PlotImage(value=True)
+    
+    plotImageTrue = PlotImageTrue(value="True") 
+    plotImage = PlotImage(value=plotImageTrue)
 
     histogramInputs = HistogramInputs(inputImage=inputImage)
     histogramConfigs = HistogramConfigs(channelRed=channelRed, channelGreen=channelGreen, channelBlue=channelBlue, channelGrayScale=channelGrayScale, pixelMin=pixelMin, pixelMax=pixelMax, plotImage=plotImage)

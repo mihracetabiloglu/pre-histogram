@@ -47,7 +47,7 @@ def img2hist(image, channels=None, grayscale=False, pixmin=0, pixmax=255):
     return out
 
 def hist2plot(hdata):
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(8, 6))
     
     # Plot each channel's histogram
     plt.plot(hdata[0], color='red',   label='Red Channel')

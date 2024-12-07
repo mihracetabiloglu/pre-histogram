@@ -5,7 +5,10 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__file__),'../../../'))
 import cv2
 import json
-from components.Histogram.src.models.PackageModel import PackageConfigs,ConfigExecutor,PackageModel,HistogramExecutor,HistogramInputs,HistogramConfigs,HistogramRequest,InputImage, ChannelRed, ChannelGreen, ChannelBlue, ChannelGrayScale, PixelMin, PixelMax, PlotImage, ChannelRedTrue, ChannelGreenTrue, ChannelBlueTrue, ChannelGrayScaleTrue, PlotImageTrue
+from components.Histogram.src.models.PackageModel import PackageConfigs,ConfigExecutor,PackageModel,HistogramExecutor,HistogramInputs,HistogramConfigs,HistogramRequest,InputImage
+from components.Histogram.src.models.PackageModel import ChannelRed, ChannelGreen, ChannelBlue, ChannelGrayScale, PixelMin, PixelMax, PlotImage
+from components.Histogram.src.models.PackageModel import ChannelRedTrue, ChannelGreenTrue, ChannelBlueTrue, ChannelGrayScaleTrue, PlotImageTrue, ChannelRedFalse, ChannelGreenFalse, ChannelBlueFalse, ChannelGrayScaleFalse, PlotImageFalse
+
 
 from sdks.novavision.src.base.model import Image,  Request
 from sdks.novavision.src.media.image import Image as image

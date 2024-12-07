@@ -16,6 +16,7 @@ from sdks.novavision.src.base.component import Component
 from sdks.novavision.src.helper.executor import Executor
 from components.Histogram.src.utils.response import build_response
 from components.Histogram.src.models.PackageModel import PackageModel
+from sdks.novavision.src.base.model import Image as ImageModel
 
 class Histogram(Component):
     """
@@ -26,21 +27,21 @@ class Histogram(Component):
     """
 
     def __init__(self, request, bootstrap):
-        super.__init__(request)
+        super().__init__(request)
         self.request.model = PackageModel(**(self.request.data))
         self.initialize_request_data(request=request, bootstrap=bootstrap)
+        self.pixelMin = self.request.get_param("PixelMin")
+        self.pixelMax = self.request.get_param("PixelMax")
         self.image = self.request.get_param("inputImage")
-        self.pixelMin = self.request.get_param("pixelMin")
-        self.pixelMax = self.request.get_param("pixelMax")
         self.channels = []        
         self.load_param()
 
     def load_param(self):
-        self.channelRed = self.request.get_param("channelRed") == "True"
-        self.channelGreen = self.request.get_param("channelGreen") == "True"
-        self.channelBlue = self.request.get_param("channelBlue") == "True"
-        self.channelGrayScale = self.request.get_param("channelGrayScale") == "True"
-        self.plotImage = self.request.get_param("plotImage") == "True"
+        self.channelRed = self.request.get_param("ChannelRed") == "True"
+        self.channelGreen = self.request.get_param("ChannelGreen") == "True"
+        self.channelBlue = self.request.get_param("ChannelBlue") == "True"
+        self.channelGrayScale = self.request.get_param("ChannelGrayScale") == "True"
+        self.plotImage = self.request.get_param("PlotImage") == "True"
 
         if self.channelRed   : self.channels.append(0)
         if self.channelGreen : self.channels.append(1)
@@ -55,11 +56,14 @@ class Histogram(Component):
         if not img: return None
         
         """ RGB & GrayScale Data Output : list[list[float]] """
-        self.out = self.img2hist(self.image, self.channels, self.channelGrayScale, self.pixelMin, self.pixelMax)
-        
+        self.out = self.img2hist(img.value, self.channels, self.channelGrayScale, self.pixelMin, self.pixelMax)
+        #Self.out : Frame needed !!
+
         """ MathPlot Image Generation : If plot image checkbox checked """
         if self.plotImage: 
-            self.image = self.hist2plot(self.out)
+            img = self.hist2plot(self.out)
+            # Image convert needed !!
+            self.image = ImageModel(name=img.name, uID=img.uID, mimeType=img.mimeType, encoding=img.encoding, value=img.value, type=img.type)
             self.image = Image.set_frame(img=img, package_uID=self.uID, redis_db=self.redis_db)
         
         packageModel = build_response(context=self)

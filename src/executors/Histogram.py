@@ -61,9 +61,7 @@ class Histogram(Component):
 
         """ MathPlot Image Generation : If plot image checkbox checked """
         if self.plotImage: 
-            img = self.hist2plot(self.out)
-            # Image convert needed !!
-            self.image = ImageModel(name=img.name, uID=img.uID, mimeType=img.mimeType, encoding=img.encoding, value=img.value, type=img.type)
+            img.value = self.hist2plot(self.out)
             self.image = Image.set_frame(img=img, package_uID=self.uID, redis_db=self.redis_db)
         
         packageModel = build_response(context=self)

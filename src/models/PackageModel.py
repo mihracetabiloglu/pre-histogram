@@ -1,11 +1,11 @@
-import numbers
+
 from pydantic import Field, validator
-from typing import List, Optional, Union, Any, Dict, Literal
-from sdks.novavision.src.base.model import Package, Image, Param, Inputs, Configs, Outputs, Response, Request, Output, Input,Config
+from typing import List, Optional, Union, Literal
+from sdks.novavision.src.base.model import Package, Image, Inputs, Configs, Outputs, Response, Request, Output, Input, Config
 
 class InputImage(Input):
     name: Literal["inputImage"] = "inputImage"
-    value: Union[List[Image],Image]
+    value: Union[List[Image], Image]
     type = "object"
 
     @validator("type", pre=True, always=True)
@@ -15,12 +15,13 @@ class InputImage(Input):
             return "object"
         elif isinstance(value, list):
             return "list"
+
     class Config:
         title = "Image"
 
 class OutputData(Output):
     name: Literal["outputData"] = "outputData"
-    value: List[List]
+    value: Union[List]
     type: Literal["list"] = "list"
 
 class OutputImage(Output):
@@ -38,104 +39,104 @@ class OutputImage(Output):
     class Config:
         title = "Image"
 
-class ChannelRedTrue(Config):
-    name: Literal["ChannelRedTrue"] = "ChannelRedTrue"
+class ConfigChannelRedTrue(Config):
+    name: Literal["configChannelRedTrue"] = "configChannelRedTrue"
     value: Literal["True"] = "True"
     type: Literal["string"] = "string"
     field: Literal["option"] = "option"
     class Config:
         title = "Enable"
 
-class ChannelRedFalse(Config):
-    name: Literal["ChannelRedFalse"] = "ChannelRedFalse"
+class ConfigChannelRedFalse(Config):
+    name: Literal["configChannelRedFalse"] = "configChannelRedFalse"
     value: Literal["False"] = "False"
     type: Literal["string"] = "string"
     field: Literal["option"] = "option"
     class Config:
         title = "Disable"
 
-class ChannelGreenTrue(Config):
-    name: Literal["ChannelGreenTrue"] = "ChannelGreenTrue"
+class ConfigChannelGreenTrue(Config):
+    name: Literal["configChannelGreenTrue"] = "configChannelGreenTrue"
     value: Literal["True"] = "True"
     type: Literal["string"] = "string"
     field: Literal["option"] = "option"
     class Config:
         title = "Enable"
 
-class ChannelGreenFalse(Config):
-    name: Literal["ChannelGreenFalse"] = "ChannelGreenFalse"
+class ConfigChannelGreenFalse(Config):
+    name: Literal["configChannelGreenFalse"] = "configChannelGreenFalse"
     value: Literal["False"] = "False"
     type: Literal["string"] = "string"
     field: Literal["option"] = "option"
     class Config:
         title = "Disable"
 
-class ChannelBlueTrue(Config):
-    name: Literal["ChannelBlueTrue"] = "ChannelBlueTrue"
+class ConfigChannelBlueTrue(Config):
+    name: Literal["configChannelBlueTrue"] = "configChannelBlueTrue"
     value: Literal["True"] = "True"
     type: Literal["string"] = "string"
     field: Literal["option"] = "option"
     class Config:
         title = "Enable"
 
-class ChannelBlueFalse(Config):
-    name: Literal["ChannelBlueFalse"] = "ChannelBlueFalse"
+class ConfigChannelBlueFalse(Config):
+    name: Literal["configChannelBlueFalse"] = "configChannelBlueFalse"
     value: Literal["False"] = "False"
     type: Literal["string"] = "string"
     field: Literal["option"] = "option"
     class Config:
         title = "Disable"
 
-class ChannelGrayScaleTrue(Config):
-    name: Literal["ChannelGrayScaleTrue"] = "ChannelGrayScaleTrue"
+class ConfigChannelGrayScaleTrue(Config):
+    name: Literal["configChannelGrayScaleTrue"] = "configChannelGrayScaleTrue"
     value: Literal["True"] = "True"
     type: Literal["string"] = "string"
     field: Literal["option"] = "option"
     class Config:
         title = "Enable"
 
-class ChannelGrayScaleFalse(Config):
-    name: Literal["ChannelGrayScaleFalse"] = "ChannelGrayScaleFalse"
+class ConfigChannelGrayScaleFalse(Config):
+    name: Literal["configChannelGrayScaleFalse"] = "configChannelGrayScaleFalse"
     value: Literal["False"] = "False"
     type: Literal["string"] = "string"
     field: Literal["option"] = "option"
     class Config:
         title = "Disable"
 
-class ChannelRed(Config):
-    name: Literal["ChannelRed"] = "ChannelRed"
-    value: Union[ChannelRedTrue, ChannelRedFalse]
+class ConfigChannelRed(Config):
+    name: Literal["configChannelRed"] = "configChannelRed"
+    value: Union[ConfigChannelRedTrue, ConfigChannelRedFalse]
     type: Literal["object"] = "object"
-    field: Literal["dependentDropdownlist"] = "dependentDropdownlist"
+    field: Literal["dropdownlist"] = "dropdownlist"
     class Config:
         title = "Red Channel"
 
-class ChannelGreen(Config):
-    name: Literal["ChannelGreen"] = "ChannelGreen"
-    value: Union[ChannelGreenTrue, ChannelGreenFalse]
+class ConfigChannelGreen(Config):
+    name: Literal["configChannelGreen"] = "configChannelGreen"
+    value: Union[ConfigChannelGreenTrue, ConfigChannelGreenFalse]
     type: Literal["object"] = "object"
-    field: Literal["dependentDropdownlist"] = "dependentDropdownlist"
+    field: Literal["dropdownlist"] = "dropdownlist"
     class Config:
         title = "Green Channel"
 
-class ChannelBlue(Config):
-    name: Literal["ChannelBlue"] = "ChannelBlue"
-    value: Union[ChannelBlueTrue, ChannelBlueFalse]
+class ConfigChannelBlue(Config):
+    name: Literal["configChannelBlue"] = "configChannelBlue"
+    value: Union[ConfigChannelBlueTrue, ConfigChannelBlueFalse]
     type: Literal["object"] = "object"
-    field: Literal["dependentDropdownlist"] = "dependentDropdownlist"
+    field: Literal["dropdownlist"] = "dropdownlist"
     class Config:
         title = "Blue Channel"
 
-class ChannelGrayScale(Config):
-    name: Literal["ChannelGrayScale"] = "ChannelGrayScale"
-    value: Union[ChannelGrayScaleTrue, ChannelGrayScaleFalse]
+class ConfigChannelGrayScale(Config):
+    name: Literal["configChannelGrayScale"] = "configChannelGrayScale"
+    value: Union[ConfigChannelGrayScaleTrue, ConfigChannelGrayScaleFalse]
     type: Literal["object"] = "object"
-    field: Literal["dependentDropdownlist"] = "dependentDropdownlist"
+    field: Literal["dropdownlist"] = "dropdownlist"
     class Config:
         title = "Gray Scale Channel"
 
-class PixelMin(Config):
-    name: Literal["PixelMin"] = "PixelMin"
+class ConfigPixelMin(Config):
+    name: Literal["configPixelMin"] = "configPixelMin"
     value: int = Field(ge=0, le=255, default=0)
     type: Literal["number"] = "number"
     field: Literal["textInput"] = "textInput"
@@ -143,8 +144,8 @@ class PixelMin(Config):
     class Config:
         title="Pixel Minimum Value"
 
-class PixelMax(Config):
-    name: Literal["PixelMax"] = "PixelMax"
+class ConfigPixelMax(Config):
+    name: Literal["configPixelMax"] = "configPixelMax"
     value: int = Field(ge=0, le=255, default=255)
     type: Literal["number"] = "number"
     field: Literal["textInput"] = "textInput"
@@ -152,27 +153,27 @@ class PixelMax(Config):
     class Config:
         title="Pixel Maximum Value"
 
-class PlotImageTrue(Config):
-    name: Literal["PlotImage"] = "PlotImage"
+class ConfigPlotImageTrue(Config):
+    name: Literal["configPlotImageTrue"] = "configPlotImageTrue"
     value: Literal["True"] = "True"
     type: Literal["string"] = "string"
     field: Literal["option"] = "option"
     class Config:
         title="Enable"
 
-class PlotImageFalse(Config):
-    name: Literal["PlotImageFalse"] = "PlotImageFalse"
+class ConfigPlotImageFalse(Config):
+    name: Literal["configPlotImageFalse"] = "configPlotImageFalse"
     value: Literal["False"] = "False"
     type: Literal["string"] = "string"
     field: Literal["option"] = "option"
     class Config:
         title="Disable"
 
-class PlotImage(Config):
-    name: Literal["PlotImage"] = "PlotImage"
-    value: Union[PlotImageTrue, PlotImageFalse]
+class ConfigPlotImage(Config):
+    name: Literal["configPlotImage"] = "configPlotImage"
+    value: Union[ConfigPlotImageTrue, ConfigPlotImageFalse]
     type: Literal["object"] = "object"
-    field: Literal["dependentDropdownlist"] = "dependentDropdownlist"
+    field: Literal["dropdownlist"] = "dropdownlist"
     class Config:
         title = "Histogram Plot"
 
@@ -180,13 +181,13 @@ class HistogramInputs(Inputs):
     inputImage: InputImage
 
 class HistogramConfigs(Configs):
-    channelRed : ChannelRed
-    channelGreen : ChannelGreen
-    channelBlue : ChannelBlue
-    channelGrayScale : ChannelGrayScale
-    pixelMin : PixelMin
-    pixelMax : PixelMax
-    plotImage : PlotImage
+    configChannelRed : ConfigChannelRed
+    configChannelGreen : ConfigChannelGreen
+    configChannelBlue : ConfigChannelBlue
+    configChannelGrayScale : ConfigChannelGrayScale
+    configPixelMin : ConfigPixelMin
+    configPixelMax : ConfigPixelMax
+    configPlotImage : ConfigPlotImage
 
 class HistogramOutputs(Outputs):
     outputData: OutputData

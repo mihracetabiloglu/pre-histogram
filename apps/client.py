@@ -10,8 +10,8 @@ from sdks.novavision.src.media.image import Image
 from sdks.novavision.src.base.model import Image as ImageModel
 
 from components.Histogram.src.models.PackageModel import PackageConfigs, ConfigExecutor, PackageModel, HistogramExecutor, HistogramInputs, HistogramConfigs, HistogramRequest, InputImage
-from components.Histogram.src.models.PackageModel import ChannelRed, ChannelGreen, ChannelBlue, ChannelGrayScale, PixelMin, PixelMax, PlotImage
-from components.Histogram.src.models.PackageModel import ChannelRedTrue, ChannelGreenTrue, ChannelBlueTrue, ChannelGrayScaleTrue, PlotImageTrue
+from components.Histogram.src.models.PackageModel import ConfigChannelRed, ConfigChannelGreen, ConfigChannelBlue, ConfigChannelGrayScale, ConfigPixelMin, ConfigPixelMax, ConfigPlotImage
+from components.Histogram.src.models.PackageModel import ConfigChannelRedTrue, ConfigChannelGreenTrue, ConfigChannelBlueTrue, ConfigChannelGrayScaleTrue, ConfigPlotImageTrue
 
 ENDPOINT_URL = "http://127.0.0.1:8000/api"
 
@@ -28,24 +28,24 @@ def infer():
     image_obj = Image.encode64(image_obj)
     inputImage = InputImage(value=image_obj)
 
-    channelRedTrue = ChannelRedTrue(value="True")
-    channelGreenTrue = ChannelGreenTrue(value="True")
-    channelBlueTrue = ChannelBlueTrue(value="True")
-    channelGrayScaleTrue = ChannelGrayScaleTrue(value="True")
+    channelRedTrue = ConfigChannelRedTrue(value="True")
+    channelGreenTrue = ConfigChannelGreenTrue(value="True")
+    channelBlueTrue = ConfigChannelBlueTrue(value="True")
+    channelGrayScaleTrue = ConfigChannelGrayScaleTrue(value="True")
 
-    channelRed = ChannelRed(value=channelRedTrue)
-    channelBlue = ChannelBlue(value=channelBlueTrue)
-    channelGreen = ChannelGreen(value=channelGreenTrue)
-    channelGrayScale = ChannelGrayScale(value=channelGrayScaleTrue)
+    channelRed = ConfigChannelRed(value=channelRedTrue)
+    channelBlue = ConfigChannelBlue(value=channelBlueTrue)
+    channelGreen = ConfigChannelGreen(value=channelGreenTrue)
+    channelGrayScale = ConfigChannelGrayScale(value=channelGrayScaleTrue)
 
-    pixelMin = PixelMin(value=0)
-    pixelMax = PixelMax(value=255)
+    pixelMin = ConfigPixelMin(value=0)
+    pixelMax = ConfigPixelMax(value=255)
     
-    plotImageTrue = PlotImageTrue(value="True") 
-    plotImage = PlotImage(value=plotImageTrue)
+    plotImageTrue = ConfigPlotImageTrue(value="True")
+    plotImage = ConfigPlotImage(value=plotImageTrue)
 
     histogramInputs = HistogramInputs(inputImage=inputImage)
-    histogramConfigs = HistogramConfigs(channelRed=channelRed, channelGreen=channelGreen, channelBlue=channelBlue, channelGrayScale=channelGrayScale, pixelMin=pixelMin, pixelMax=pixelMax, plotImage=plotImage)
+    histogramConfigs = HistogramConfigs(configChannelRed=channelRed, configChannelGreen=channelGreen, configChannelBlue=channelBlue, configChannelGrayScale=channelGrayScale, configPixelMin=pixelMin, configPixelMax=pixelMax, configPlotImage=plotImage)
     histogramRequest =  HistogramRequest(inputs=histogramInputs, configs=histogramConfigs)
     histogramExecutor = HistogramExecutor(value=histogramRequest)
     executor = ConfigExecutor(value=histogramExecutor)

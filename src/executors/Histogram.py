@@ -28,13 +28,13 @@ class Histogram(Component):
         self.request.model = PackageModel(**(self.request.data))
         self.initialize_request_data(request=request, bootstrap=bootstrap)
         self.image = self.request.get_param("inputImage")
-        self.channelRed = self.request.get_param("ChannelRed") == "True"
-        self.channelGreen = self.request.get_param("ChannelGreen") == "True"
-        self.channelBlue = self.request.get_param("ChannelBlue") == "True"
-        self.channelGrayScale = self.request.get_param("ChannelGrayScale") == "True"
-        self.pixelMin = self.request.get_param("PixelMin")
-        self.pixelMax = self.request.get_param("PixelMax")        
-        self.plotImage = self.request.get_param("PlotImage") == "True"
+        self.channelRed = self.request.get_param("configChannelRed") == "True"
+        self.channelGreen = self.request.get_param("configChannelGreen") == "True"
+        self.channelBlue = self.request.get_param("configChannelBlue") == "True"
+        self.channelGrayScale = self.request.get_param("configChannelGrayScale") == "True"
+        self.pixelMin = self.request.get_param("configPixelMin")
+        self.pixelMax = self.request.get_param("configPixelMax")
+        self.plotImage = self.request.get_param("configPlotImage") == "True"
 
         self.channels = []        
         if self.channelRed   : self.channels.append(0)

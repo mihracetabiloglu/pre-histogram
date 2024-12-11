@@ -1,7 +1,3 @@
-"""
-    Image to RGB & GrayScale histogram data.   
-"""
-
 import os
 import sys
 import cv2
@@ -11,12 +7,13 @@ import matplotlib.pyplot as plt
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../../'))
 
 from sdks.novavision.src.media.image import Image
+from sdks.novavision.src.base.model import Image as ImageModel
 from sdks.novavision.src.base.response import Response
 from sdks.novavision.src.base.component import Component
 from sdks.novavision.src.helper.executor import Executor
+
 from components.Histogram.src.utils.response import build_response
 from components.Histogram.src.models.PackageModel import PackageModel
-from sdks.novavision.src.base.model import Image as ImageModel
 
 class Histogram(Component):
     """
@@ -30,19 +27,16 @@ class Histogram(Component):
         super().__init__(request)
         self.request.model = PackageModel(**(self.request.data))
         self.initialize_request_data(request=request, bootstrap=bootstrap)
-        self.pixelMin = self.request.get_param("PixelMin")
-        self.pixelMax = self.request.get_param("PixelMax")
         self.image = self.request.get_param("inputImage")
-        self.channels = []        
-        self.load_param()
-
-    def load_param(self):
         self.channelRed = self.request.get_param("ChannelRed") == "True"
         self.channelGreen = self.request.get_param("ChannelGreen") == "True"
         self.channelBlue = self.request.get_param("ChannelBlue") == "True"
         self.channelGrayScale = self.request.get_param("ChannelGrayScale") == "True"
+        self.pixelMin = self.request.get_param("PixelMin")
+        self.pixelMax = self.request.get_param("PixelMax")        
         self.plotImage = self.request.get_param("PlotImage") == "True"
 
+        self.channels = []        
         if self.channelRed   : self.channels.append(0)
         if self.channelGreen : self.channels.append(1)
         if self.channelBlue  : self.channels.append(2)

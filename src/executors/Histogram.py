@@ -80,7 +80,7 @@ class Histogram(Component):
             - Index 3: Grayscale
         """
         # Output structure: [R_hist, G_hist, B_hist, Gray_hist]
-        out = [None, None, None, None]
+        out = [[], [], [], []]
 
         # Clamp pixel value range
         pixmax = max(pixmin, min(pixmax + 1, 256))
@@ -106,29 +106,29 @@ class Histogram(Component):
 
     def hist2plot(self, hdata):
         plt.figure(figsize=(10, 6))
-        
+
         # Plot each channel's histogram
         plt.plot(hdata[0], color='red',   label='Red Channel')
         plt.plot(hdata[1], color='green', label='Green Channel')
         plt.plot(hdata[2], color='blue',  label='Blue Channel')
         plt.plot(hdata[3], color='black', label='GrayScale')
-        
+
         # Add labels and title
         plt.title('Histogram')
         plt.xlabel('Pixel Intensity')
         plt.ylabel('Frequency')
         plt.legend()
         plt.grid(True)
-        
+
         # Save the figure to a numpy array
         plt.tight_layout()
         canvas = plt.gca().figure.canvas
         canvas.draw()
-        
+
         # Convert to numpy array
         img = np.frombuffer(canvas.tostring_rgb(), dtype=np.uint8)
         img = img.reshape(canvas.get_width_height()[::-1] + (3,))
-        
+
         # Convert to BGR for OpenCV compatibility
         img_bgr = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 

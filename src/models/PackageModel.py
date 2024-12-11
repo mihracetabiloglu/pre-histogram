@@ -103,7 +103,7 @@ class ChannelGrayScaleFalse(Config):
         title = "Disable"
 
 class ChannelRed(Config):
-    name: Literal["ConfigRed"] = "ConfigRed"
+    name: Literal["ChannelRed"] = "ChannelRed"
     value: Union[ChannelRedTrue, ChannelRedFalse]
     type: Literal["object"] = "object"
     field: Literal["dependentDropdownlist"] = "dependentDropdownlist"
@@ -111,7 +111,7 @@ class ChannelRed(Config):
         title = "Red Channel"
 
 class ChannelGreen(Config):
-    name: Literal["ConfigGreen"] = "ConfigGreen"
+    name: Literal["ChannelGreen"] = "ChannelGreen"
     value: Union[ChannelGreenTrue, ChannelGreenFalse]
     type: Literal["object"] = "object"
     field: Literal["dependentDropdownlist"] = "dependentDropdownlist"
@@ -119,7 +119,7 @@ class ChannelGreen(Config):
         title = "Green Channel"
 
 class ChannelBlue(Config):
-    name: Literal["ConfigBlue"] = "ConfigBlue"
+    name: Literal["ChannelBlue"] = "ChannelBlue"
     value: Union[ChannelBlueTrue, ChannelBlueFalse]
     type: Literal["object"] = "object"
     field: Literal["dependentDropdownlist"] = "dependentDropdownlist"
@@ -127,7 +127,7 @@ class ChannelBlue(Config):
         title = "Blue Channel"
 
 class ChannelGrayScale(Config):
-    name: Literal["ConfigGrayScale"] = "ConfigGrayScale"
+    name: Literal["ChannelGrayScale"] = "ChannelGrayScale"
     value: Union[ChannelGrayScaleTrue, ChannelGrayScaleFalse]
     type: Literal["object"] = "object"
     field: Literal["dependentDropdownlist"] = "dependentDropdownlist"

@@ -1,22 +1,40 @@
-# Histogram
+# **Pre-Histogram**
 
-This Python module processes images to compute and visualize RGB and Grayscale histograms. 
-1. **Purpose**:  
-   The `Histogram` class extracts histogram data for the RGB and Grayscale channels of an image. It allows users to specify pixel intensity ranges and optionally generates a histogram plot using Matplotlib.
+## **Histogram (Component)**
 
-2. **Features**:  
-   - Computes normalized histograms for specified RGB channels (Red, Green, Blue) and Grayscale.  
-   - Supports pixel intensity range customization (`pixelMin`, `pixelMax`).  
-   - Optionally generates a visual plot of the histogram data and converts it into an image.  
+The Histogram executor processes images to compute and visualize RGB and Grayscale histogram data. Histogram data represents the normalized frequency of pixel values within the image. The output data format is explained in the "Histogram Outputs" section. You can select the channels and pixel interval to be processed. Additionally, there is an option to plot the data as a Matplotlib image.
 
-3. **Core Functions**:  
-   - **`img2hist`**: Calculates histograms for specified channels and Grayscale, normalizing the results.  
-   - **`hist2plot`**: Visualizes the computed histograms using Matplotlib and converts the plot to an OpenCV-compatible image format.  
+#### **Histogram Inputs:**
+* [InputImage]: Image
 
-4. **Usage**:  
-   - Pass an image and configuration parameters (e.g., selected channels, pixel intensity range) to the `Histogram` class.  
-   - The `run` method processes the image, computes histogram data, and returns the results.  
-   - If enabled, a histogram plot is generated as an image.
+#### **Histogram Outputs:**
+* [OutputData]: List[List[float]] - 2D float array containing histogram data  
+* [OutputImage]: Image - Optional plot output image
 
-5. **Integration**:  
-   Designed to be used within a larger application framework, it integrates with custom components for image processing, response building, and external configurations.
+> **OutputData Format:** `List[List[float]]`  
+`OutputData` contains four sub-arrays:  
+- `red`: Red channel histogram data  
+- `green`: Green channel histogram data  
+- `blue`: Blue channel histogram data  
+- `grayscale`: Grayscale channel histogram data  
+
+**Channel Histogram Data Example:**  
+`channelData` is a list of float values representing the normalized frequency of pixel values.  
+For instance:  
+`channelData[12]` indicates the probability that a pixel has a value of 12.
+
+- `channelData[index]`: Probability that a pixel has a value of "index"  
+- `channelData[x]`: Probability that a pixel has a value of "x"
+
+> **Note:** If the pixel values are clamped using `pixelMin` and `pixelMax`, the `channelData` will have "0" for each index below the `pixelMin` value, and the list will end at the `pixelMax` index.
+
+* **OutputImage Format:** Matplotlib graph
+
+#### **Histogram Configurations:**
+* [ConfigChannelRed]: Dropdown list - Enable/Disable  
+* [ConfigChannelGreen]: Dropdown list - Enable/Disable  
+* [ConfigChannelBlue]: Dropdown list - Enable/Disable  
+* [ConfigChannelGrayScale]: Dropdown list - Enable/Disable  
+* [ConfigPixelMin]: Text input - Integer value between 0 and 255  
+* [ConfigPixelMax]: Text input - Integer value between 0 and 255  
+* [ConfigPlotImage]: Dropdown list - Enable/Disable

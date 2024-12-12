@@ -32,12 +32,12 @@ class Histogram(Component):
         self.channelGreen = self.request.get_param("configChannelGreen") == "True"
         self.channelBlue = self.request.get_param("configChannelBlue") == "True"
         self.channelGrayScale = self.request.get_param("configChannelGrayScale") == "True"
-        self.pixelMin = self.request.get_param("configPixelMin")
-        self.pixelMax = self.request.get_param("configPixelMax")
         
-        # Clamp pixel value range
-        self.pixelMax = max(self.pixelMin, min(self.pixelMax + 1, 256))
-        self.pixelMin = max(0, min(self.pixelMin, self.pixelMax))
+        # Regularize the pixel min-max value
+        configPixelMin = self.request.get_param("configPixelMin")
+        configPixelMax = self.request.get_param("configPixelMax")
+        self.pixelMax = max(configPixelMin, min(configPixelMax + 1, 256))
+        self.pixelMin = max(0, min(configPixelMin, configPixelMax))
 
         self.plotImage = self.request.get_param("configPlotImage") == "True"
 

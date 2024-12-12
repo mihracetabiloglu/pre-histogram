@@ -34,6 +34,11 @@ class Histogram(Component):
         self.channelGrayScale = self.request.get_param("configChannelGrayScale") == "True"
         self.pixelMin = self.request.get_param("configPixelMin")
         self.pixelMax = self.request.get_param("configPixelMax")
+        
+        # Clamp pixel value range
+        self.pixelMax = max(self.pixelMin, min(self.pixelMax + 1, 256))
+        self.pixelMin = max(0, min(self.pixelMin, self.pixelMax))
+
         self.plotImage = self.request.get_param("configPlotImage") == "True"
 
         self.channels = []        
@@ -81,10 +86,6 @@ class Histogram(Component):
         """
         # Output structure: [R_hist, G_hist, B_hist, Gray_hist]
         out = [[], [], [], []]
-
-        # Clamp pixel value range
-        pixmax = max(pixmin, min(pixmax + 1, 256))
-        pixmin = max(0, min(pixmin, pixmax))
 
         # Compute RGB channel histograms if channels are specified
         if channels:

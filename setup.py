@@ -1,12 +1,12 @@
 import setuptools
 
 setuptools.setup(
-    name="package",
+    name="pre-histogram",
     version="0.0.1",
     author="DigiNova",
     author_email='info@diginova.com.tr',
-    description="Package",
-    url='https://github.com/novavision-ai/package',
+    description="Histogram - Preprocesing Component for NOVAVISION",
+    url='https://github.com/novavision-ai/pre-histogram',
     license='MIT',
     install_requires=['sdk', 'opencv-python-headless'],
 
@@ -17,15 +17,10 @@ setuptools.setup(
     ],
 
     packages=[
-        'novavision.package',
-        'novavision.package.classes',
-        'novavision.package.configs',
-        'novavision.package.dataloaders',
-        'novavision.package.executors',
-        'novavision.package.models',
-        'novavision.package.utils',
-        'novavision.package.weights'
+        'pre.histogram',
+        'pre.histogram.executors',
+        'pre.histogram.models'
     ],
-    package_dir={'novavision.package': 'src'},
+    package_dir={'pre.histogram': 'src'},
     python_requires=">=3.6"
 )

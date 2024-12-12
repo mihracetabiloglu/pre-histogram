@@ -1,180 +1,240 @@
-import numbers
 
 from pydantic import Field, validator
-from typing import List, Optional, Union, Any, Dict,Literal
-
-from sdks.novavision.src.base.model import Package,Input, Output, Images, Config, Inputs, Configs, Outputs, Response, Request
-
+from typing import List, Optional, Union, Literal
+from sdks.novavision.src.base.model import Package, Image, Inputs, Configs, Outputs, Response, Request, Output, Input, Config
 
 class InputImage(Input):
     name: Literal["inputImage"] = "inputImage"
-    value: Images
-    type: Literal["Images"] = "Images"
+    value: Union[List[Image], Image]
+    type = "object"
 
+    @validator("type", pre=True, always=True)
+    def set_type_based_on_value(cls, value, values):
+        value = values.get('value')
+        if isinstance(value, Image):
+            return "object"
+        elif isinstance(value, list):
+            return "list"
 
-class ImageData(Output):
-    name: Literal["Imagedata"] = "Imagedata"
-    value: List
-    type: Literal["list"] = "list"
-    field: Literal["data"] = "data"
+    class Config:
+        title = "Image"
 
 class OutputData(Output):
-    name: Literal["OutputData"] = "OutputData"
-    value: ImageData
+    name: Literal["outputData"] = "outputData"
+    value: Union[List]
     type: Literal["list"] = "list"
-    field: Literal["data"] = "data"
 
+class OutputImage(Output):
+    name: Literal["outputImage"] = "outputImage"
+    value: Union[List[Image],Image]
+    type = "object"
 
-class configTypeSegmentation(Config):
-    name: Literal["segmentation"] = "segmentation"
-    value: Literal["segmentation"] = "segmentation"
+    @validator("type", pre=True, always=True)
+    def set_type_based_on_value(cls, value, values):
+        value = values.get('value')
+        if isinstance(value, Image):
+            return "object"
+        elif isinstance(value, list):
+            return "list"
+    class Config:
+        title = "Image"
+
+class ConfigChannelRedTrue(Config):
+    name: Literal["configChannelRedTrue"] = "configChannelRedTrue"
+    value: Literal["True"] = "True"
     type: Literal["string"] = "string"
     field: Literal["option"] = "option"
-
     class Config:
-        title = "Segmentation"
+        title = "Enable"
 
+class ConfigChannelRedFalse(Config):
+    name: Literal["configChannelRedFalse"] = "configChannelRedFalse"
+    value: Literal["False"] = "False"
+    type: Literal["string"] = "string"
+    field: Literal["option"] = "option"
+    class Config:
+        title = "Disable"
 
-class ConfigType(Config):
-    name: Literal["configType"] = "configType"
-    value:Union[configTypeSegmentation]
+class ConfigChannelGreenTrue(Config):
+    name: Literal["configChannelGreenTrue"] = "configChannelGreenTrue"
+    value: Literal["True"] = "True"
+    type: Literal["string"] = "string"
+    field: Literal["option"] = "option"
+    class Config:
+        title = "Enable"
+
+class ConfigChannelGreenFalse(Config):
+    name: Literal["configChannelGreenFalse"] = "configChannelGreenFalse"
+    value: Literal["False"] = "False"
+    type: Literal["string"] = "string"
+    field: Literal["option"] = "option"
+    class Config:
+        title = "Disable"
+
+class ConfigChannelBlueTrue(Config):
+    name: Literal["configChannelBlueTrue"] = "configChannelBlueTrue"
+    value: Literal["True"] = "True"
+    type: Literal["string"] = "string"
+    field: Literal["option"] = "option"
+    class Config:
+        title = "Enable"
+
+class ConfigChannelBlueFalse(Config):
+    name: Literal["configChannelBlueFalse"] = "configChannelBlueFalse"
+    value: Literal["False"] = "False"
+    type: Literal["string"] = "string"
+    field: Literal["option"] = "option"
+    class Config:
+        title = "Disable"
+
+class ConfigChannelGrayScaleTrue(Config):
+    name: Literal["configChannelGrayScaleTrue"] = "configChannelGrayScaleTrue"
+    value: Literal["True"] = "True"
+    type: Literal["string"] = "string"
+    field: Literal["option"] = "option"
+    class Config:
+        title = "Enable"
+
+class ConfigChannelGrayScaleFalse(Config):
+    name: Literal["configChannelGrayScaleFalse"] = "configChannelGrayScaleFalse"
+    value: Literal["False"] = "False"
+    type: Literal["string"] = "string"
+    field: Literal["option"] = "option"
+    class Config:
+        title = "Disable"
+
+class ConfigChannelRed(Config):
+    name: Literal["configChannelRed"] = "configChannelRed"
+    value: Union[ConfigChannelRedTrue, ConfigChannelRedFalse]
     type: Literal["object"] = "object"
     field: Literal["dropdownlist"] = "dropdownlist"
-
     class Config:
-        title = "Type"
+        title = "Red Channel"
 
-
-
-class SegmentationInputs(Inputs):
-    inputImage: InputImage
-
-
-
-class SegmentationConfigs(Configs):
-    configType: ConfigType
-
-
-
-class SegmentationOutputs(Outputs):
-    OutputData: OutputData
-
-
-
-
-class SegmentationRequest(Request):
-    inputs: Optional[SegmentationInputs]
-    configs: SegmentationConfigs
-    class Config:
-        schema_extra = {
-            "target": "configs"
-        }
-
-
-class SegmentationResponse(Response):
-    outputs: SegmentationOutputs
-
-
-
-class SegmentationExecutor(Config):
-    name: Literal["Segmentation"] = "Segmentation"
-    value: Union[SegmentationRequest, SegmentationResponse]
+class ConfigChannelGreen(Config):
+    name: Literal["configChannelGreen"] = "configChannelGreen"
+    value: Union[ConfigChannelGreenTrue, ConfigChannelGreenFalse]
     type: Literal["object"] = "object"
-    field: Literal["option"] = "option"
-
+    field: Literal["dropdownlist"] = "dropdownlist"
     class Config:
-        title = "Segmentation"
-        schema_extra = {
-            "target": {
-                "value": 0
-            }
-        }
+        title = "Green Channel"
 
+class ConfigChannelBlue(Config):
+    name: Literal["configChannelBlue"] = "configChannelBlue"
+    value: Union[ConfigChannelBlueTrue, ConfigChannelBlueFalse]
+    type: Literal["object"] = "object"
+    field: Literal["dropdownlist"] = "dropdownlist"
+    class Config:
+        title = "Blue Channel"
 
-class TrainOutputs(Outputs):
-    OutputData: OutputData
+class ConfigChannelGrayScale(Config):
+    name: Literal["configChannelGrayScale"] = "configChannelGrayScale"
+    value: Union[ConfigChannelGrayScaleTrue, ConfigChannelGrayScaleFalse]
+    type: Literal["object"] = "object"
+    field: Literal["dropdownlist"] = "dropdownlist"
+    class Config:
+        title = "Gray Scale Channel"
 
-
-
-class TrainResponse(Response):
-    outputs: TrainOutputs
-
-
-
-class BatchSize(Config):
-    name: Literal["BatchSize"] = "BatchSize"
-    value: int = Field(ge=1, le=100)
+class ConfigPixelMin(Config):
+    name: Literal["configPixelMin"] = "configPixelMin"
+    value: int = Field(ge=0, le=255, default=0)
     type: Literal["number"] = "number"
     field: Literal["textInput"] = "textInput"
-
+    placeHolder: Literal["[0-255]"] = "[0-255]"
     class Config:
-        title = "Batch Size"
+        title="Pixel Minimum Value"
 
-
-
-class Path(Config):
-    name: Literal["path"] = "path"
-    value: str
-    type: Literal["string"] = "string"
+class ConfigPixelMax(Config):
+    name: Literal["configPixelMax"] = "configPixelMax"
+    value: int = Field(ge=0, le=255, default=255)
+    type: Literal["number"] = "number"
     field: Literal["textInput"] = "textInput"
-
+    placeHolder: Literal["[0-255]"] = "[0-255]"
     class Config:
-        title = "Path"
+        title="Pixel Maximum Value"
 
+class ConfigPlotImageTrue(Config):
+    name: Literal["configPlotImageTrue"] = "configPlotImageTrue"
+    value: Literal["True"] = "True"
+    type: Literal["string"] = "string"
+    field: Literal["option"] = "option"
+    class Config:
+        title="Enable"
 
+class ConfigPlotImageFalse(Config):
+    name: Literal["configPlotImageFalse"] = "configPlotImageFalse"
+    value: Literal["False"] = "False"
+    type: Literal["string"] = "string"
+    field: Literal["option"] = "option"
+    class Config:
+        title="Disable"
 
+class ConfigPlotImage(Config):
+    name: Literal["configPlotImage"] = "configPlotImage"
+    value: Union[ConfigPlotImageTrue, ConfigPlotImageFalse]
+    type: Literal["object"] = "object"
+    field: Literal["dropdownlist"] = "dropdownlist"
+    class Config:
+        title = "Histogram Plot"
 
+class HistogramInputs(Inputs):
+    inputImage: InputImage
 
-class TrainConfigs(Configs):
-    configPath:Path
-    batchSize: BatchSize
+class HistogramConfigs(Configs):
+    configChannelRed : ConfigChannelRed
+    configChannelGreen : ConfigChannelGreen
+    configChannelBlue : ConfigChannelBlue
+    configChannelGrayScale : ConfigChannelGrayScale
+    configPixelMin : ConfigPixelMin
+    configPixelMax : ConfigPixelMax
+    configPlotImage : ConfigPlotImage
 
-class TrainRequest(Request):
-    configs: TrainConfigs
+class HistogramOutputs(Outputs):
+    outputData: OutputData
+    outputImage: OutputImage
 
+class HistogramRequest(Request):
+    inputs: Optional[HistogramInputs]
+    configs: HistogramConfigs
     class Config:
         schema_extra = {
             "target": "configs"
         }
 
+class HistogramResponse(Response):
+    outputs: HistogramOutputs
 
-class TrainExecutor(Config):
-    name: Literal["Train"] = "Train"
-    value: Union[TrainRequest, TrainResponse]
+class HistogramExecutor(Config):
+    name: Literal["Histogram"] = "Histogram"
+    value: Union[HistogramRequest, HistogramResponse]
     type: Literal["object"] = "object"
     field: Literal["option"] = "option"
 
     class Config:
-        title = "Train"
+        title = "Histogram"
         schema_extra = {
             "target": {
                 "value": 0
             }
         }
-
-
 
 class ConfigExecutor(Config):
     name: Literal["ConfigExecutor"] = "ConfigExecutor"
-    value: Union[SegmentationExecutor,TrainExecutor]
-    type:Literal["executor"] = "executor"
+    value: Union[HistogramExecutor]
+    type: Literal["executor"] = "executor"
     field: Literal["dependentDropdownlist"] = "dependentDropdownlist"
 
     class Config:
-        title = "Task",
+        title = "Task"
         schema_extra = {
             "target": "value"
-
         }
 
 class PackageConfigs(Configs):
     executor: ConfigExecutor
 
-
 class PackageModel(Package):
-    type: Literal["capsule"] ="capsule"
-    name : Literal["Segmentation"] = "Segmentation"
-    uID = "1221112"
     configs: PackageConfigs
-
-
+    type: Literal["component"] = "component"
+    name: Literal["Histogram"] = "Histogram"
+    uID = "1221112"

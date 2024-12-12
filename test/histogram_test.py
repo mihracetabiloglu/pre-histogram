@@ -22,7 +22,7 @@ def img2hist(image, channels=None, grayscale=False, pixmin=0, pixmax=255):
         - Index 3: Grayscale
     """
     # Output structure: [R_hist, G_hist, B_hist, Gray_hist]
-    out = [None, None, None, None]
+    out = [[], [], [], []]
 
     # Clamp pixel value range
     pixmax = max(pixmin, min(pixmax + 1, 256))
@@ -46,31 +46,38 @@ def img2hist(image, channels=None, grayscale=False, pixmin=0, pixmax=255):
 
     return out
 
-def hist2plot(hdata):
-    plt.figure(figsize=(8, 6))
-    
+def hist2plot(hdata, channels:list=None, grayscale=False, pixmin=0, pixmax=255):
+    plt.figure(figsize=(10, 6))
+
+    plt.xlim(pixmin, pixmax)
+
+    if pixmin > 0:
+        for i in range(4):
+            empty = [0] * pixmin
+            hdata[i] = empty + hdata[i]
+
     # Plot each channel's histogram
-    plt.plot(hdata[0], color='red',   label='Red Channel')
-    plt.plot(hdata[1], color='green', label='Green Channel')
-    plt.plot(hdata[2], color='blue',  label='Blue Channel')
-    plt.plot(hdata[3], color='black', label='GrayScale')
-    
+    if channels.__contains__(0): plt.plot(hdata[0], color='red',   label='Red Channel')
+    if channels.__contains__(1): plt.plot(hdata[1], color='lime', label='Green Channel')
+    if channels.__contains__(2): plt.plot(hdata[2], color='blue',  label='Blue Channel')
+    if grayscale: plt.plot(hdata[3], color='black', label='GrayScale')
+
     # Add labels and title
     plt.title('Histogram')
     plt.xlabel('Pixel Intensity')
     plt.ylabel('Frequency')
     plt.legend()
     plt.grid(True)
-    
+
     # Save the figure to a numpy array
     plt.tight_layout()
     canvas = plt.gca().figure.canvas
     canvas.draw()
-    
+
     # Convert to numpy array
     img = np.frombuffer(canvas.tostring_rgb(), dtype=np.uint8)
     img = img.reshape(canvas.get_width_height()[::-1] + (3,))
-    
+
     # Convert to BGR for OpenCV compatibility
     img_bgr = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 
@@ -89,9 +96,14 @@ if __name__ == "__main__":
     if image is None:
         print("Image not found. Check the path!")
     else:
+        channels = [0, 1, 2]
+        grayscale = True
+        pixmin = 0
+        pixmax = 255
+
         # Compute histogram data and visualize it
-        hdata = img2hist(image, channels=[0, 1, 2], grayscale=True, pixmin=0, pixmax=255)
-        hist_img = hist2plot(hdata)
+        hdata = img2hist(image, channels=channels, grayscale=grayscale, pixmin=pixmin, pixmax=pixmax)
+        hist_img = hist2plot(hdata, channels=channels, grayscale=grayscale, pixmin=pixmin, pixmax=pixmax)
 
         # Display the original image and histogram
         cv2.imshow("Histogram", hist_img)

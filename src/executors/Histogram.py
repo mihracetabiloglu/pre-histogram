@@ -55,7 +55,7 @@ class Histogram(Component):
 
         """ MathPlot Image Generation : If plot image checkbox checked """
         if self.plotImage: 
-            img.value = self.hist2plot(self.out)
+            img.value = self.hist2plot(self.out, self.channels, self.channelGrayScale, self.pixelMin, self.pixelMax)
             self.image = Image.set_frame(img=img, package_uID=self.uID, redis_db=self.redis_db)
         
         packageModel = build_response(context=self)
@@ -104,14 +104,21 @@ class Histogram(Component):
 
         return out
 
-    def hist2plot(self, hdata):
+    def hist2plot(self, hdata, channels:list, grayscale=False, pixmin=0, pixmax=255):
         plt.figure(figsize=(10, 6))
 
+        plt.xlim(pixmin, pixmax)
+
+        if pixmin > 0:
+            for i in range(4):
+                empty = [0] * pixmin
+                hdata[i] = empty + hdata[i]
+
         # Plot each channel's histogram
-        plt.plot(hdata[0], color='red',   label='Red Channel')
-        plt.plot(hdata[1], color='green', label='Green Channel')
-        plt.plot(hdata[2], color='blue',  label='Blue Channel')
-        plt.plot(hdata[3], color='black', label='GrayScale')
+        if channels.__contains__(0): plt.plot(hdata[0], color='red',   label='Red Channel')
+        if channels.__contains__(1): plt.plot(hdata[1], color='lime', label='Green Channel')
+        if channels.__contains__(2): plt.plot(hdata[2], color='blue',  label='Blue Channel')
+        if grayscale: plt.plot(hdata[3], color='black', label='GrayScale')
 
         # Add labels and title
         plt.title('Histogram')

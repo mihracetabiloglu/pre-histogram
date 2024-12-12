@@ -5,7 +5,7 @@
 The Histogram executor processes images to compute and visualize RGB and Grayscale histogram data. Histogram data represents the normalized frequency of pixel values within the image. The output data format is explained in the "Histogram Outputs" section. You can select the channels and pixel interval to be processed. Additionally, there is an option to plot the data as a Matplotlib image.
 
 #### **Histogram Inputs:**
-* [InputImage]: Image
+* [InputImage]: Image -
 
 #### **Histogram Outputs:**
 * [OutputData]: List[List[float]] - 2D float array containing histogram data  

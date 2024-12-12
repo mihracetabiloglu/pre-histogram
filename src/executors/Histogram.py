@@ -32,7 +32,7 @@ class Histogram(Component):
         self.channelGreen = self.request.get_param("configChannelGreen") == "True"
         self.channelBlue = self.request.get_param("configChannelBlue") == "True"
         self.channelGrayScale = self.request.get_param("configChannelGrayScale") == "True"
-        
+
         # Regularize the pixel min-max value
         configPixelMin = self.request.get_param("configPixelMin")
         configPixelMax = self.request.get_param("configPixelMax")
@@ -95,6 +95,8 @@ class Histogram(Component):
                     hist = cv2.calcHist([image], [cvchannel], None, [pixmax - pixmin], [pixmin, pixmax])
                     hist = cv2.normalize(hist, hist).flatten().tolist()
                     out[channel] = hist
+                    empty = [0] * pixmin
+                    out[channel] = empty + out[channel]
 
         # Compute grayscale histogram if requested
         if grayscale:
@@ -102,6 +104,8 @@ class Histogram(Component):
             gray_hist = cv2.calcHist([gray_image], [0], None, [pixmax - pixmin], [pixmin, pixmax])
             gray_hist = cv2.normalize(gray_hist, gray_hist).flatten().tolist()
             out[3] = gray_hist
+            empty = [0] * pixmin
+            out[3] = empty + out[3]
 
         return out
 
@@ -109,11 +113,6 @@ class Histogram(Component):
         plt.figure(figsize=(10, 6))
 
         plt.xlim(pixmin, pixmax)
-
-        if pixmin > 0:
-            for i in range(4):
-                empty = [0] * pixmin
-                hdata[i] = empty + hdata[i]
 
         # Plot each channel's histogram
         if channels.__contains__(0): plt.plot(hdata[0], color='red',   label='Red Channel')

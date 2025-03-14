@@ -55,6 +55,5 @@ class Equalization(Component):
 
         return image
 
-
 if "__main__" == __name__:
     Executor(sys.argv[1]).run()

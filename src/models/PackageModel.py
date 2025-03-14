@@ -5,7 +5,7 @@ from sdks.novavision.src.base.model import Package, Image, Inputs, Configs, Outp
 class InputImage(Input):
     name: Literal["inputImage"] = "inputImage"
     value: Union[List[Image], Image]
-    type = "object"
+    type: str = "object"
 
     @validator("type", pre=True, always=True)
     def set_type_based_on_value(cls, value, values):
@@ -26,7 +26,7 @@ class OutputData(Output):
 class OutputImage(Output):
     name: Literal["outputImage"] = "outputImage"
     value: Union[List[Image],Image]
-    type = "object"
+    type: str = "object"
 
     @validator("type", pre=True, always=True)
     def set_type_based_on_value(cls, value, values):

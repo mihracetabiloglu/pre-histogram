@@ -197,7 +197,7 @@ class HistogramRequest(Request):
     inputs: Optional[HistogramInputs]
     configs: HistogramConfigs
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "target": "configs"
         }
 
@@ -212,7 +212,72 @@ class HistogramExecutor(Config):
 
     class Config:
         title = "Histogram"
-        schema_extra = {
+        json_schema_extra = {
+            "target": {
+                "value": 0
+            }
+        }
+
+
+class EqualizationInputs(Inputs):
+    inputImage: InputImage
+
+class ConfigEqualizationGrayScale(Config):
+    name: Literal["configEqualizationGrayScale"] = "configEqualizationGrayScale"
+    value: Literal["True", "False"]
+    type: Literal["object"] = "object"
+    field: Literal["dropdownlist"] = "dropdownlist"
+    class Config:
+        title = "Equalization GrayScale"
+
+
+class ConfigEqualizationRGB(Config):
+    name: Literal["configEqualizationRGB"] = "configEqualizationRGB"
+    value: Literal["True", "False"]
+    type: Literal["string"] = "string"
+    field: Literal["dropdownlist"] = "dropdownlist"
+    class Config:
+        title = "Equalize RGB"
+
+class ConfigPlotHistogram(Config):
+    name: Literal["configPlotHistogram"] = "configPlotHistogram"
+    value: Literal["True", "False"]
+    type: Literal["string"] = "string"
+    field: Literal["dropdownlist"] = "dropdownlist"
+    class Config:
+        title = "Plot Histogram"
+
+class EqualizationConfigs(Configs):
+    configEqualizationGrayScale: ConfigEqualizationGrayScale
+    configEqualizationRGB: ConfigEqualizationRGB
+    configPlotHistogram: ConfigPlotHistogram
+
+
+
+class EqualizationOutputs(Outputs):
+    outputImage: OutputImage
+
+
+class EqualizationRequest(Request):
+    inputs: Optional[EqualizationInputs]
+    configs: EqualizationConfigs
+    class Config:
+        json_schema_extra = {
+            "target": "configs"
+        }
+
+class EqualizationResponse(Response):
+    outputs: EqualizationOutputs
+
+class EqualizationExecutor(Config):
+    name: Literal["Equalization"] = "Equalization"
+    value: Union[EqualizationRequest, EqualizationResponse]
+    type: Literal["object"] = "object"
+    field: Literal["option"] = "option"
+
+    class Config:
+        title = "Equalization"
+        json_schema_extra = {
             "target": {
                 "value": 0
             }
@@ -220,13 +285,13 @@ class HistogramExecutor(Config):
 
 class ConfigExecutor(Config):
     name: Literal["ConfigExecutor"] = "ConfigExecutor"
-    value: Union[HistogramExecutor]
+    value: Union[HistogramExecutor,EqualizationExecutor]
     type: Literal["executor"] = "executor"
     field: Literal["dependentDropdownlist"] = "dependentDropdownlist"
 
     class Config:
         title = "Task"
-        schema_extra = {
+        json_schema_extra = {
             "target": "value"
         }
 

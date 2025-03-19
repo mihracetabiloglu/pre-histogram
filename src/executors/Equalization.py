@@ -9,8 +9,8 @@ from sdks.novavision.src.base.model import Image as ImageModel
 from sdks.novavision.src.base.response import Response
 from sdks.novavision.src.base.component import Component
 from sdks.novavision.src.helper.executor import Executor
-from components.Histogram.src.utils.response import build_response
-from components.Histogram.src.models.PackageModel import PackageModel
+from components.pre_histogram.src.utils.response import build_response
+from components.pre_histogram.src.models.PackageModel import PackageModel
 
 
 class Equalization(Component):

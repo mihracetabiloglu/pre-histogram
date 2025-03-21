@@ -296,3 +296,5 @@ class PackageModel(Package):
     configs: PackageConfigs
     type: Literal["component"] = "component"
     name: Literal["Histogram"] = "Histogram"
+    uID: str = "1221112"
+

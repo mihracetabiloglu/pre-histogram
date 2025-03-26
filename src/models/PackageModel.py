@@ -179,39 +179,72 @@ class ConfigPlotImage(Config):
         title = "Histogram Plot"
 
 
-class ConfigEqualizationGrayScaleTrue(Config):
-    label: Literal["True"] = "True"
-    value: Literal[True] = True
+class ConfigConvertToGrayTrue(Config):
+    name: Literal["configConvertToGrayTrue"] = "configConvertToGrayTrue"
+    value: Literal["True"] = "True"
+    type: Literal["string"] = "string"
+    field: Literal["option"] = "option"
 
-class ConfigEqualizationGrayScaleFalse(Config):
-    label: Literal["False"] = "False"
-    value: Literal[False] = False
+    class Config:
+        title = "Convert to Grayscale: Yes"
 
 
-class ConfigEqualizationGrayScale(Config):
-    name: Literal["configEqualizationGrayScale"] = "configEqualizationGrayScale"
-    value: Union[ConfigEqualizationGrayScaleTrue, ConfigEqualizationGrayScaleFalse]
+class ConfigConvertToGrayFalse(Config):
+    name: Literal["configConvertToGrayFalse"] = "configConvertToGrayFalse"
+    value: Literal["False"] = "False"
+    type: Literal["string"] = "string"
+    field: Literal["option"] = "option"
+
+    class Config:
+        title = "Convert to Grayscale: No"
+
+
+class ConfigConvertToGray(Config):
+    name: Literal["convert_to_gray"] = "convert_to_gray"
+    value: Union[ConfigConvertToGrayTrue, ConfigConvertToGrayFalse]
     type: Literal["object"] = "object"
     field: Literal["dropdownlist"] = "dropdownlist"
+
     class Config:
-        title = "Equalization Grayscale"
+        title = "Convert To Grayscale"
+
+class ConfigClipLimit(Config):
+    name: Literal["clip_limit"] = "clip_limit"
+    value: float
+    type: Literal["number"] = "number"
+    field: Literal["textInput"] = "textInput"
+
+    class Config:
+        title = "CLAHE Clip Limit"
+
+class TileSize4x4(Config):
+    name: Literal["tileSize4x4"] = "tileSize4x4"
+    value: Literal["(4, 4)"] = "(4, 4)"
+    type: Literal["string"] = "string"
+    field: Literal["option"] = "option"
+
+    class Config:
+        title = "4 x 4"
 
 
-class ConfigEqualizationRGBTrue(Config):
-    label: Literal["True"] = "True"
-    value: Literal[True] = True
+class TileSize8x8(Config):
+    name: Literal["tileSize8x8"] = "tileSize8x8"
+    value: Literal["(8, 8)"] = "(8, 8)"
+    type: Literal["string"] = "string"
+    field: Literal["option"] = "option"
 
-class ConfigEqualizationRGBFalse(Config):
-    label: Literal["False"] = "False"
-    value: Literal[False] = False
+    class Config:
+        title = "8 x 8"
 
-class ConfigEqualizationRGB(Config):
-    name: Literal["configEqualizationRGB"] = "configEqualizationRGB"
-    value: Union[ConfigEqualizationRGBTrue, ConfigEqualizationRGBFalse]
+
+class ConfigTileGridSize(Config):
+    name: Literal["tile_grid_size"] = "tile_grid_size"
+    value: Union[TileSize4x4, TileSize8x8]
     type: Literal["object"] = "object"
     field: Literal["dropdownlist"] = "dropdownlist"
+
     class Config:
-        title = "Equalization RGB"
+        title = "Tile Grid Size"
 
 
 class HistogramInputs(Inputs):
@@ -239,7 +272,6 @@ class HistogramRequest(Request):
             "target": "configs"
         }
 
-
 class HistogramResponse(Response):
     outputs: HistogramOutputs
 
@@ -248,8 +280,9 @@ class EqualizationInputs(Inputs):
     inputImage: InputImage
 
 class EqualizationConfigs(Configs):
-    configEqualizationGrayScale: ConfigEqualizationGrayScale
-    configEqualizationRGB: ConfigEqualizationRGB
+    configClipLimit: ConfigClipLimit
+    configTileGridSize: ConfigTileGridSize
+    configConvertToGray: ConfigConvertToGray
 
 class EqualizationOutputs(Outputs):
     outputImage: OutputImage

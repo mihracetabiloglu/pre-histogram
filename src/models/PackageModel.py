@@ -1,6 +1,5 @@
 from pydantic import Field, validator
 from typing import List, Optional, Union, Literal
-
 from sdks.novavision.src.base.model import Package, Image, Inputs, Configs, Outputs, Response, Request, Output, Input, Config
 
 class InputImage(Input):
@@ -36,7 +35,6 @@ class OutputImage(Output):
             return "object"
         elif isinstance(value, list):
             return "list"
-
     class Config:
         title = "Image"
 
@@ -178,78 +176,8 @@ class ConfigPlotImage(Config):
     class Config:
         title = "Histogram Plot"
 
-
-class ConfigConvertToGrayTrue(Config):
-    name: Literal["configConvertToGrayTrue"] = "configConvertToGrayTrue"
-    value: Literal["True"] = "True"
-    type: Literal["string"] = "string"
-    field: Literal["option"] = "option"
-
-    class Config:
-        title = "Convert to Grayscale: Yes"
-
-
-class ConfigConvertToGrayFalse(Config):
-    name: Literal["configConvertToGrayFalse"] = "configConvertToGrayFalse"
-    value: Literal["False"] = "False"
-    type: Literal["string"] = "string"
-    field: Literal["option"] = "option"
-
-    class Config:
-        title = "Convert to Grayscale: No"
-
-
-class ConfigConvertToGray(Config):
-    name: Literal["convert_to_gray"] = "convert_to_gray"
-    value: Union[ConfigConvertToGrayTrue, ConfigConvertToGrayFalse]
-    type: Literal["object"] = "object"
-    field: Literal["dropdownlist"] = "dropdownlist"
-
-    class Config:
-        title = "Convert To Grayscale"
-
-class ConfigClipLimit(Config):
-    name: Literal["clip_limit"] = "clip_limit"
-    value: float = Field(ge=1.0, le=10.0, default=2.0)
-    type: Literal["number"] = "number"
-    field: Literal["textInput"] = "textInput"
-
-    class Config:
-        title = "CLAHE Clip Limit"
-
-class TileSize4x4(Config):
-    name: Literal["tileSize4x4"] = "tileSize4x4"
-    value: Literal["(4, 4)"] = "(4, 4)"
-    type: Literal["string"] = "string"
-    field: Literal["option"] = "option"
-
-    class Config:
-        title = "4 x 4"
-
-
-class TileSize8x8(Config):
-    name: Literal["tileSize8x8"] = "tileSize8x8"
-    value: Literal["(8, 8)"] = "(8, 8)"
-    type: Literal["string"] = "string"
-    field: Literal["option"] = "option"
-
-    class Config:
-        title = "8 x 8"
-
-
-class ConfigTileGridSize(Config):
-    name: Literal["tile_grid_size"] = "tile_grid_size"
-    value: Union[TileSize4x4, TileSize8x8]
-    type: Literal["object"] = "object"
-    field: Literal["dropdownlist"] = "dropdownlist"
-
-    class Config:
-        title = "Tile Grid Size"
-
-
 class HistogramInputs(Inputs):
     inputImage: InputImage
-
 
 class HistogramConfigs(Configs):
     configChannelRed : ConfigChannelRed
@@ -275,30 +203,6 @@ class HistogramRequest(Request):
 class HistogramResponse(Response):
     outputs: HistogramOutputs
 
-
-class EqualizationInputs(Inputs):
-    inputImage: InputImage
-
-class EqualizationConfigs(Configs):
-    configClipLimit: ConfigClipLimit
-    configTileGridSize: ConfigTileGridSize
-    configConvertToGray: ConfigConvertToGray
-
-class EqualizationOutputs(Outputs):
-    outputImage: OutputImage
-
-class EqualizationRequest(Request):
-    inputs: Optional[EqualizationInputs]
-    configs: EqualizationConfigs
-    class Config:
-        json_schema_extra = {
-            "target": "configs"
-        }
-
-class EqualizationResponse(Response):
-    outputs: EqualizationOutputs
-
-
 class HistogramExecutor(Config):
     name: Literal["Histogram"] = "Histogram"
     value: Union[HistogramRequest, HistogramResponse]
@@ -313,11 +217,63 @@ class HistogramExecutor(Config):
             }
         }
 
+
+class EqualizationInputs(Inputs):
+    inputImage: InputImage
+
+class ConfigEqualizationGrayScale(Config):
+    name: Literal["configEqualizationGrayScale"] = "configEqualizationGrayScale"
+    value: Literal["True", "False"]
+    type: Literal["object"] = "object"
+    field: Literal["dropdownlist"] = "dropdownlist"
+    class Config:
+        title = "Equalization GrayScale"
+
+
+class ConfigEqualizationRGB(Config):
+    name: Literal["configEqualizationRGB"] = "configEqualizationRGB"
+    value: Literal["True", "False"]
+    type: Literal["string"] = "string"
+    field: Literal["dropdownlist"] = "dropdownlist"
+    class Config:
+        title = "Equalize RGB"
+
+class ConfigPlotHistogram(Config):
+    name: Literal["configPlotHistogram"] = "configPlotHistogram"
+    value: Literal["True", "False"]
+    type: Literal["string"] = "string"
+    field: Literal["dropdownlist"] = "dropdownlist"
+    class Config:
+        title = "Plot Histogram"
+
+class EqualizationConfigs(Configs):
+    configEqualizationGrayScale: ConfigEqualizationGrayScale
+    configEqualizationRGB: ConfigEqualizationRGB
+    configPlotHistogram: ConfigPlotHistogram
+
+
+
+class EqualizationOutputs(Outputs):
+    outputImage: OutputImage
+
+
+class EqualizationRequest(Request):
+    inputs: Optional[EqualizationInputs]
+    configs: EqualizationConfigs
+    class Config:
+        json_schema_extra = {
+            "target": "configs"
+        }
+
+class EqualizationResponse(Response):
+    outputs: EqualizationOutputs
+
 class EqualizationExecutor(Config):
     name: Literal["Equalization"] = "Equalization"
     value: Union[EqualizationRequest, EqualizationResponse]
     type: Literal["object"] = "object"
     field: Literal["option"] = "option"
+
     class Config:
         title = "Equalization"
         json_schema_extra = {
@@ -334,7 +290,9 @@ class ConfigExecutor(Config):
 
     class Config:
         title = "Task"
-
+        json_schema_extra = {
+            "target": "value"
+        }
 
 class PackageConfigs(Configs):
     executor: ConfigExecutor
@@ -343,5 +301,3 @@ class PackageModel(Package):
     configs: PackageConfigs
     type: Literal["component"] = "component"
     name: Literal["Histogram"] = "Histogram"
-
-

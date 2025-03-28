@@ -1,6 +1,6 @@
 
 from sdks.novavision.src.helper.package import PackageHelper
-from components.Histogram.src.models.PackageModel import PackageModel, PackageConfigs, HistogramOutputs, HistogramResponse, HistogramExecutor, ConfigExecutor, OutputData, OutputImage
+from components.pre_histogram.src.models.PackageModel import PackageModel, PackageConfigs, HistogramOutputs, HistogramResponse, HistogramExecutor, ConfigExecutor, OutputData, OutputImage
 
 def build_response(context):
     outputData = OutputData(value=context.out)

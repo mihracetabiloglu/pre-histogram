@@ -178,36 +178,6 @@ class ConfigPlotImage(Config):
     class Config:
         title = "Histogram Plot"
 
-
-class ConfigConvertToGrayTrue(Config):
-    name: Literal["configConvertToGrayTrue"] = "configConvertToGrayTrue"
-    value: Literal["True"] = "True"
-    type: Literal["string"] = "string"
-    field: Literal["option"] = "option"
-
-    class Config:
-        title = "Convert to Grayscale: Yes"
-
-
-class ConfigConvertToGrayFalse(Config):
-    name: Literal["configConvertToGrayFalse"] = "configConvertToGrayFalse"
-    value: Literal["False"] = "False"
-    type: Literal["string"] = "string"
-    field: Literal["option"] = "option"
-
-    class Config:
-        title = "Convert to Grayscale: No"
-
-
-class ConfigConvertToGray(Config):
-    name: Literal["convert_to_gray"] = "convert_to_gray"
-    value: Union[ConfigConvertToGrayTrue, ConfigConvertToGrayFalse]
-    type: Literal["object"] = "object"
-    field: Literal["dropdownlist"] = "dropdownlist"
-
-    class Config:
-        title = "Convert To Grayscale"
-
 class ConfigClipLimit(Config):
     name: Literal["clip_limit"] = "clip_limit"
     value: float = Field(ge=1.0, le=10.0, default=2.0)
@@ -282,7 +252,6 @@ class EqualizationInputs(Inputs):
 class EqualizationConfigs(Configs):
     configClipLimit: ConfigClipLimit
     configTileGridSize: ConfigTileGridSize
-    configConvertToGray: ConfigConvertToGray
 
 class EqualizationOutputs(Outputs):
     outputImage: OutputImage

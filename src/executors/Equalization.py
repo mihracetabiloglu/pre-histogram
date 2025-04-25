@@ -33,7 +33,7 @@ class Equalization(Component):
         self.image = self.request.get_param("inputImage")
         self.clip_limit = self.request.get_param("clip_limit")
         self.tile_grid_size = self._parse_tile_size(self.request.get_param("tile_grid_size"))
-        self.convert_to_gray = self.request.get_param("convert_to_gray")
+
 
     @staticmethod
     def bootstrap(config: dict) -> dict:
@@ -44,13 +44,7 @@ class Equalization(Component):
 
     def apply_clahe(self, image):
         if len(image.shape) == 3 and image.shape[2] == 3:
-            if str(self.convert_to_gray) == "True":
-                image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-            else:
-                raise ValueError(
-                    "CLAHE yalnızca tek kanallı (grayscale) görüntü üzerinde çalışır. "
-                    "Lütfen 'convert_to_gray' ayarını True yapınız veya grayscale görüntü gönderiniz."
-                )
+            image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
         if len(image.shape) != 2:
             raise ValueError("CLAHE uygulanacak görüntü tek kanallı olmalıdır!")

@@ -8,7 +8,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../../../../'))
 
 from sdks.novavision.src.media.image import Image
 from sdks.novavision.src.base.model import Image as ImageModel
-from sdks.novavision.src.base.response import Response
 from sdks.novavision.src.base.component import Component
 from sdks.novavision.src.helper.executor import Executor
 
@@ -47,12 +46,11 @@ class Histogram(Component):
         if self.channelBlue  : self.channels.append(2)
 
     @staticmethod
-    def bootstrap() -> dict:
+    def bootstrap(config: dict) -> dict:
         return {}
 
     def run(self):
         img = Image.get_frame(img=self.image, redis_db=self.redis_db)
-        if not img: return None
         
         """ RGB & GrayScale Data Output : list[list[float]] """
         self.out = self.img2hist(img.value, self.channels, self.channelGrayScale, self.pixelMin, self.pixelMax)
@@ -64,7 +62,7 @@ class Histogram(Component):
             self.image = Image.set_frame(img=img, package_uID=self.uID, redis_db=self.redis_db)
         
         packageModel = build_response(context=self)
-        return Response(model=packageModel, bootstrap=self.bootstrap).response()
+        return packageModel
 
     def img2hist(self, image, channels=None, grayscale=False, pixmin=0, pixmax=255):
         """

@@ -6,7 +6,6 @@ import numpy as np
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../../'))
 
 from sdks.novavision.src.media.image import Image
-from sdks.novavision.src.base.response import Response
 from sdks.novavision.src.base.component import Component
 from sdks.novavision.src.helper.executor import Executor
 from components.Histogram.src.utils.response import build_response_equalization
@@ -37,7 +36,7 @@ class Equalization(Component):
         self.convert_to_gray = self.request.get_param("convert_to_gray")
 
     @staticmethod
-    def bootstrap() -> dict:
+    def bootstrap(config: dict) -> dict:
         return {}
 
     def _parse_tile_size(self, tile_size_str):
@@ -68,14 +67,10 @@ class Equalization(Component):
         Executes the CLAHE histogram equalization process.
         """
         img = Image.get_frame(img=self.image, redis_db=self.redis_db)
-        if not img:
-            return None
-
         img.value = self.apply_clahe(img.value)
-
         self.image = Image.set_frame(img=img, package_uID=self.uID, redis_db=self.redis_db)
         packageModel = build_response_equalization(context=self)
-        return Response(model=packageModel, bootstrap=self.bootstrap).response()
+        return packageModel
 
 
 if __name__ == "__main__":

@@ -9,9 +9,9 @@ sys.path.append(os.path.join(os.path.dirname(__file__),'../../../'))
 from sdks.novavision.src.media.image import Image
 from sdks.novavision.src.base.model import Image as ImageModel
 
-from components.Histogram.src.models.PackageModel import PackageConfigs, ConfigExecutor, PackageModel, HistogramExecutor, HistogramInputs, HistogramConfigs, HistogramRequest, InputImage
-from components.Histogram.src.models.PackageModel import ConfigChannelRed, ConfigChannelGreen, ConfigChannelBlue, ConfigChannelGrayScale, ConfigPixelMin, ConfigPixelMax, ConfigPlotImage
-from components.Histogram.src.models.PackageModel import ConfigChannelRedTrue, ConfigChannelGreenTrue, ConfigChannelBlueTrue, ConfigChannelGrayScaleTrue, ConfigPlotImageTrue
+from components.PreHistogram.src.models.PackageModel import PackageConfigs, ConfigExecutor, PackageModel, HistogramExecutor, HistogramInputs, HistogramConfigs, HistogramRequest, InputImage
+from components.PreHistogram.src.models.PackageModel import ConfigChannelRed, ConfigChannelGreen, ConfigChannelBlue, ConfigChannelGrayScale, ConfigPixelMin, ConfigPixelMax, ConfigPlotImage
+from components.PreHistogram.src.models.PackageModel import ConfigChannelRedTrue, ConfigChannelGreenTrue, ConfigChannelBlueTrue, ConfigChannelGrayScaleTrue, ConfigPlotImageTrue
 
 ENDPOINT_URL = "http://127.0.0.1:8000/api"
 
@@ -50,7 +50,7 @@ def infer():
     histogramExecutor = HistogramExecutor(value=histogramRequest)
     executor = ConfigExecutor(value=histogramExecutor)
     packageConfigs = PackageConfigs(executor=executor)
-    request = PackageModel(configs=packageConfigs, name="Histogram")
+    request = PackageModel(configs=packageConfigs, name="PreHistogram")
 
     request_json = json.loads(request.json())
     response = requests.post(ENDPOINT_URL, json=request_json)

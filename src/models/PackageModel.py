@@ -311,6 +311,6 @@ class PackageConfigs(Configs):
 class PackageModel(Package):
     configs: PackageConfigs
     type: Literal["component"] = "component"
-    name: Literal["Histogram"] = "Histogram"
+    name: Literal["PreHistogram"] = "PreHistogram"
 
 

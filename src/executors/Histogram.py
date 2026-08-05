@@ -37,7 +37,7 @@ class Histogram(Component):
         self.pixelMax = max(configPixelMin, min(configPixelMax + 1, 256))
         self.pixelMin = max(0, min(configPixelMin, configPixelMax))
 
-        self.plotImage = str(self.request.get_param("configPlotImage")).lower() == "true"
+        self.plotImage = True
 
         self.channels = []
 

@@ -11,8 +11,8 @@ from sdks.novavision.src.base.model import Image as ImageModel
 from sdks.novavision.src.base.component import Component
 from sdks.novavision.src.helper.executor import Executor
 
-from components.pre_histogram.src.utils.response import build_response
-from components.pre_histogram.src.models.PackageModel import PackageModel
+from components.PreHistogram.src.utils.response import build_response_histogram
+from components.PreHistogram.src.models.PackageModel import PackageModel
 
 class Histogram(Component):
     """
@@ -61,7 +61,7 @@ class Histogram(Component):
             img.value = self.hist2plot(self.out, self.channels, self.channelGrayScale, self.pixelMin, self.pixelMax)
             self.image = Image.set_frame(img=img, package_uID=self.uID, redis_db=self.redis_db)
         
-        packageModel = build_response(context=self)
+        packageModel = build_response_histogram(context=self)
         return packageModel
 
     def img2hist(self, image, channels=None, grayscale=False, pixmin=0, pixmax=255):

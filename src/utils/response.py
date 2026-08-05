@@ -3,7 +3,7 @@ from sdks.novavision.src.helper.package import PackageHelper
 from components.PreHistogram.src.models.PackageModel import PackageModel, PackageConfigs, HistogramOutputs, HistogramResponse, HistogramExecutor, EqualizationExecutor, EqualizationResponse, EqualizationOutputs, ConfigExecutor, OutputData, OutputImage
 
 def build_response_histogram(context):
-    outputData = OutputData(value=context.initialize_request_data)
+    outputData = OutputData(value=context.out)
     outputImage = OutputImage(value=context.image)
     histogramoutputs = HistogramOutputs(outputData=outputData, outputImage=outputImage)
     histogramResponse = HistogramResponse(outputs=histogramoutputs)
@@ -17,8 +17,8 @@ def build_response_histogram(context):
 
 def build_response_equalization(context):
     outputImage = OutputImage(value=context.image)
-    equalizationOutputs = EqualizationOutputs(outputImage=outputImage)
-    equalizationResponse = EqualizationResponse(outputs=equalizationOutputs)
+    equalizationoutputs = EqualizationOutputs(outputImage=outputImage)
+    equalizationResponse = EqualizationResponse(outputs=equalizationoutputs)
     equalizationExecutor = EqualizationExecutor(value=equalizationResponse)
     executor = ConfigExecutor(value=equalizationExecutor)
     packageConfigs = PackageConfigs(executor=executor)

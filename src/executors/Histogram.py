@@ -27,18 +27,20 @@ class Histogram(Component):
         self.request.model = PackageModel(**(self.request.data))
         self.initialize_request_data(request=request, bootstrap=bootstrap)
         self.image = self.request.get_param("inputImage")
-        self.channelRed = self.request.get_param("configChannelRed") == "True"
-        self.channelGreen = self.request.get_param("configChannelGreen") == "True"
-        self.channelBlue = self.request.get_param("configChannelBlue") == "True"
-        self.channelGrayScale = self.request.get_param("configChannelGrayScale") == "True"
+        self.channelRed = self._param_to_bool(self.request.get_param("configChannelRed"))
+        self.channelGreen = self._param_to_bool(self.request.get_param("configChannelGreen"))
+        self.channelBlue = self._param_to_bool(self.request.get_param("configChannelBlue"))
+        self.channelGrayScale = self._param_to_bool(self.request.get_param("configChannelGrayScale"))
 
         # Regularize the pixel min-max value
-        configPixelMin = self.request.get_param("configPixelMin")
-        configPixelMax = self.request.get_param("configPixelMax")
-        self.pixelMax = max(configPixelMin, min(configPixelMax + 1, 256))
-        self.pixelMin = max(0, min(configPixelMin, configPixelMax))
+        configPixelMin = self._unwrap_value(self.request.get_param("configPixelMin"))
+        configPixelMax = self._unwrap_value(self.request.get_param("configPixelMax"))
+        pixelMin = int(configPixelMin) if configPixelMin is not None else 0
+        pixelMax = int(configPixelMax) if configPixelMax is not None else 255
+        self.pixelMax = max(pixelMin, min(pixelMax + 1, 256))
+        self.pixelMin = max(0, min(pixelMin, pixelMax))
 
-        self.plotImage = self.request.get_param("configPlotImage") == "True"
+        self.plotImage = self._param_to_bool(self.request.get_param("configPlotImage"))
 
         self.channels = []        
         if self.channelRed   : self.channels.append(0)
@@ -63,6 +65,19 @@ class Histogram(Component):
         
         packageModel = build_response_histogram(context=self)
         return packageModel
+
+    def _unwrap_value(self, param):
+        if param is None:
+            return None
+        if hasattr(param, 'value'):
+            return getattr(param, 'value')
+        return param
+
+    def _param_to_bool(self, param):
+        value = self._unwrap_value(param)
+        if isinstance(value, str):
+            return value.lower() == 'true'
+        return bool(value)
 
     def img2hist(self, image, channels=None, grayscale=False, pixmin=0, pixmax=255):
         """

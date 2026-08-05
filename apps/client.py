@@ -50,7 +50,7 @@ def infer():
     histogramExecutor = HistogramExecutor(value=histogramRequest)
     executor = ConfigExecutor(value=histogramExecutor)
     packageConfigs = PackageConfigs(executor=executor)
-    request = PackageModel(configs=packageConfigs, name="Histogram")
+    request = PackageModel(configs=packageConfigs, name="PreHistogram")
 
     request_json = json.loads(request.json())
     response = requests.post(ENDPOINT_URL, json=request_json)

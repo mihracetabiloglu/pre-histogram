@@ -27,25 +27,28 @@ class Histogram(Component):
         self.request.model = PackageModel(**(self.request.data))
         self.initialize_request_data(request=request, bootstrap=bootstrap)
         self.image = self.request.get_param("inputImage")
-        self.channelRed = self._param_to_bool(self.request.get_param("configChannelRed"))
-        self.channelGreen = self._param_to_bool(self.request.get_param("configChannelGreen"))
-        self.channelBlue = self._param_to_bool(self.request.get_param("configChannelBlue"))
-        self.channelGrayScale = self._param_to_bool(self.request.get_param("configChannelGrayScale"))
-
+        self.channelRed = str(self.request.get_param("configChannelRed")).lower() == "true"
+        self.channelGreen = str(self.request.get_param("configChannelGreen")).lower() == "true"
+        self.channelBlue = str(self.request.get_param("configChannelBlue")).lower() == "true"
+        self.channelGrayScale = str(self.request.get_param("configChannelGrayScale")).lower() == "true"
         # Regularize the pixel min-max value
-        configPixelMin = self._unwrap_value(self.request.get_param("configPixelMin"))
-        configPixelMax = self._unwrap_value(self.request.get_param("configPixelMax"))
-        pixelMin = int(configPixelMin) if configPixelMin is not None else 0
-        pixelMax = int(configPixelMax) if configPixelMax is not None else 255
-        self.pixelMax = max(pixelMin, min(pixelMax + 1, 256))
-        self.pixelMin = max(0, min(pixelMin, pixelMax))
+        configPixelMin = int(self.request.get_param("configPixelMin"))
+        configPixelMax = int(self.request.get_param("configPixelMax"))
+        self.pixelMax = max(configPixelMin, min(configPixelMax + 1, 256))
+        self.pixelMin = max(0, min(configPixelMin, configPixelMax))
 
-        self.plotImage = self._param_to_bool(self.request.get_param("configPlotImage"))
+        self.plotImage = str(self.request.get_param("configPlotImage")).lower() == "true"
 
-        self.channels = []        
-        if self.channelRed   : self.channels.append(0)
-        if self.channelGreen : self.channels.append(1)
-        if self.channelBlue  : self.channels.append(2)
+        self.channels = []
+
+        if bool(self.channelRed):
+           self.channels.append(0)
+
+        if bool(self.channelGreen):
+           self.channels.append(1)
+
+        if bool(self.channelBlue):
+           self.channels.append(2)
 
     @staticmethod
     def bootstrap(config: dict) -> dict:
@@ -65,19 +68,6 @@ class Histogram(Component):
         
         packageModel = build_response_histogram(context=self)
         return packageModel
-
-    def _unwrap_value(self, param):
-        if param is None:
-            return None
-        if hasattr(param, 'value'):
-            return getattr(param, 'value')
-        return param
-
-    def _param_to_bool(self, param):
-        value = self._unwrap_value(param)
-        if isinstance(value, str):
-            return value.lower() == 'true'
-        return bool(value)
 
     def img2hist(self, image, channels=None, grayscale=False, pixmin=0, pixmax=255):
         """
@@ -106,7 +96,12 @@ class Histogram(Component):
                 if channel in [0, 1, 2]:  # Ensure valid channel index
                     cvchannel = 2 - channel # RGB to BGR issues -> [0,1,2] to [2,1,0]
                     hist = cv2.calcHist([image], [cvchannel], None, [pixmax - pixmin], [pixmin, pixmax])
-                    hist = cv2.normalize(hist, hist).flatten().tolist()
+                    hist = hist.flatten()
+
+                    if hist.max() > 0:
+                       hist = hist / hist.max()
+
+                    hist = hist.tolist()
                     out[channel] = hist
                     empty = [0] * pixmin
                     out[channel] = empty + out[channel]
@@ -115,7 +110,12 @@ class Histogram(Component):
         if grayscale:
             gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             gray_hist = cv2.calcHist([gray_image], [0], None, [pixmax - pixmin], [pixmin, pixmax])
-            gray_hist = cv2.normalize(gray_hist, gray_hist).flatten().tolist()
+            gray_hist = gray_hist.flatten()
+
+            if gray_hist.max() > 0:
+                gray_hist = gray_hist / gray_hist.max()
+
+            gray_hist = gray_hist.tolist()
             out[3] = gray_hist
             empty = [0] * pixmin
             out[3] = empty + out[3]

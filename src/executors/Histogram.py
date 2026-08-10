@@ -27,17 +27,17 @@ class Histogram(Component):
         self.request.model = PackageModel(**(self.request.data))
         self.initialize_request_data(request=request, bootstrap=bootstrap)
         self.image = self.request.get_param("inputImage")
-        self.channelRed = str(self.request.get_param("configChannelRed")).lower() == "true"
-        self.channelGreen = str(self.request.get_param("configChannelGreen")).lower() == "true"
-        self.channelBlue = str(self.request.get_param("configChannelBlue")).lower() == "true"
-        self.channelGrayScale = str(self.request.get_param("configChannelGrayScale")).lower() == "true"
+        self.channelRed = self._read_bool_param("configChannelRed")
+        self.channelGreen = self._read_bool_param("configChannelGreen")
+        self.channelBlue = self._read_bool_param("configChannelBlue")
+        self.channelGrayScale = self._read_bool_param("configChannelGrayScale")
         # Regularize the pixel min-max value
-        configPixelMin = int(self.request.get_param("configPixelMin"))
-        configPixelMax = int(self.request.get_param("configPixelMax"))
+        configPixelMin = self._read_int_param("configPixelMin", default=0)
+        configPixelMax = self._read_int_param("configPixelMax", default=255)
         self.pixelMax = max(configPixelMin, min(configPixelMax + 1, 256))
         self.pixelMin = max(0, min(configPixelMin, configPixelMax))
 
-        self.plotImage = True
+        self.plotImage = self._read_bool_param("configPlotImage", default=True)
 
         self.channels = []
 
@@ -54,6 +54,41 @@ class Histogram(Component):
     def bootstrap(config: dict) -> dict:
         return {}
 
+    def _read_config_value(self, param_name):
+        value = self.request.get_param(param_name)
+        while hasattr(value, "value"):
+            value = value.value
+        if isinstance(value, dict):
+            return value.get("value", value)
+        return value
+
+    def _read_bool_param(self, param_name, default=False):
+        raw_value = self._read_config_value(param_name)
+        if raw_value is None:
+            return default
+        if isinstance(raw_value, bool):
+            return raw_value
+        if isinstance(raw_value, (int, float)):
+            return bool(raw_value)
+        if isinstance(raw_value, str):
+            normalized = raw_value.strip().lower()
+            if normalized in {"true", "1", "yes", "enable"}:
+                return True
+            if normalized in {"false", "0", "no", "disable"}:
+                return False
+        return default
+
+    def _read_int_param(self, param_name, default=0):
+        raw_value = self._read_config_value(param_name)
+        if raw_value is None:
+            return default
+        if isinstance(raw_value, str):
+            try:
+                return int(raw_value)
+            except ValueError:
+                return default
+        return int(raw_value)
+
     def run(self):
         img = Image.get_frame(img=self.image, redis_db=self.redis_db)
         
@@ -69,7 +104,7 @@ class Histogram(Component):
         packageModel = build_response_histogram(context=self)
         return packageModel
 
-    def img2hist(self.out, image, channels=None, grayscale=False, pixmin=0, pixmax=255):
+    def img2hist(self, image, channels=None, grayscale=False, pixmin=0, pixmax=255):
         """
         Compute the histogram for specified channels in an image or for grayscale.
 

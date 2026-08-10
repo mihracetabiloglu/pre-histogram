@@ -111,3 +111,120 @@ if __name__ == "__main__":
         # Wait for key press and close windows
         cv2.waitKey(0)
         cv2.destroyAllWindows()
+
+
+def test_histogram_reads_nested_boolean_config_values():
+    import importlib.util
+    import pathlib
+    import sys
+    import types
+
+    def install_stub_modules():
+        for name in ["sdks", "sdks.novavision", "sdks.novavision.src", "sdks.novavision.src.media", "sdks.novavision.src.base", "sdks.novavision.src.helper", "components", "components.PreHistogram", "components.PreHistogram.src", "components.PreHistogram.src.utils", "components.PreHistogram.src.models"]:
+            if name not in sys.modules:
+                sys.modules[name] = types.ModuleType(name)
+
+        for name in ["sdks", "sdks.novavision", "sdks.novavision.src", "sdks.novavision.src.media", "sdks.novavision.src.base", "sdks.novavision.src.helper"]:
+            module = sys.modules[name]
+            module.__path__ = []
+
+        image_module = types.ModuleType("sdks.novavision.src.media.image")
+
+        class Image:
+            @staticmethod
+            def get_frame(**kwargs):
+                return types.SimpleNamespace(value=kwargs.get("img"))
+
+            @staticmethod
+            def set_frame(**kwargs):
+                return kwargs["img"]
+
+        image_module.Image = Image
+        sys.modules["sdks.novavision.src.media.image"] = image_module
+
+        base_model_module = types.ModuleType("sdks.novavision.src.base.model")
+        base_model_module.Image = object
+        base_model_module.Package = object
+        base_model_module.Inputs = object
+        base_model_module.Configs = object
+        base_model_module.Outputs = object
+        base_model_module.Response = object
+        base_model_module.Request = object
+        base_model_module.Output = object
+        base_model_module.Input = object
+        base_model_module.Config = object
+        sys.modules["sdks.novavision.src.base.model"] = base_model_module
+
+        component_module = types.ModuleType("sdks.novavision.src.base.component")
+
+        class Component:
+            def __init__(self, request, bootstrap=None):
+                self.request = request
+                self.redis_db = None
+                self.uID = None
+
+            def initialize_request_data(self, request, bootstrap):
+                return None
+
+        component_module.Component = Component
+        sys.modules["sdks.novavision.src.base.component"] = component_module
+
+        executor_module = types.ModuleType("sdks.novavision.src.helper.executor")
+
+        class Executor:
+            def __init__(self, data):
+                self.data = data
+
+            def run(self):
+                return None
+
+        executor_module.Executor = Executor
+        sys.modules["sdks.novavision.src.helper.executor"] = executor_module
+
+        response_module = types.ModuleType("components.PreHistogram.src.utils.response")
+        response_module.build_response_histogram = lambda context: {}
+        sys.modules["components.PreHistogram.src.utils.response"] = response_module
+
+        package_model_module = types.ModuleType("components.PreHistogram.src.models.PackageModel")
+
+        class PackageModel:
+            pass
+
+        package_model_module.PackageModel = PackageModel
+        sys.modules["components.PreHistogram.src.models.PackageModel"] = package_model_module
+
+    install_stub_modules()
+
+    module_path = pathlib.Path(__file__).resolve().parents[1] / "src" / "executors" / "Histogram.py"
+    spec = importlib.util.spec_from_file_location("histogram_under_test", module_path)
+    histogram_module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(histogram_module)
+
+    class DummyRequest:
+        def __init__(self):
+            self.data = {}
+
+        def get_param(self, name):
+            if name == "configChannelRed":
+                return types.SimpleNamespace(value="True")
+            if name == "configChannelGreen":
+                return types.SimpleNamespace(value="False")
+            if name == "configChannelBlue":
+                return types.SimpleNamespace(value="True")
+            if name == "configChannelGrayScale":
+                return types.SimpleNamespace(value="False")
+            if name == "configPixelMin":
+                return 0
+            if name == "configPixelMax":
+                return 255
+            if name == "configPlotImage":
+                return types.SimpleNamespace(value="True")
+            return None
+
+    histogram = histogram_module.Histogram(DummyRequest(), bootstrap={})
+
+    assert histogram.channelRed is True
+    assert histogram.channelGreen is False
+    assert histogram.channelBlue is True
+    assert histogram.channelGrayScale is False
+    assert histogram.plotImage is True

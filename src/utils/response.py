@@ -1,13 +1,13 @@
 
 from sdks.novavision.src.helper.package import PackageHelper
-from components.PreHistogram.src.models.PackageModel import PackageModel, PackageConfigs, HistogramOutputs, HistogramResponse, HistogramExecutor, EqualizationExecutor, EqualizationResponse, EqualizationOutputs, ConfigExecutor, OutputData, OutputImage
+from components.PreHistogram.src.models.PackageModel import PackageModel, PackageConfigs, HistogramExecutorOutputs, HistogramExecutorResponse, HistogramExecutor, EqualizationExecutor, EqualizationExecutorResponse, EqualizationExecutorOutputs, ConfigExecutor, OutputData, OutputImage
 
 def build_response_histogram(context):
     outputData = OutputData(value=context.out)
     outputImage = OutputImage(value=context.image)
-    histogramoutputs = HistogramOutputs(outputData=outputData, outputImage=outputImage)
-    histogramResponse = HistogramResponse(outputs=histogramoutputs)
-    histogramExecutor = HistogramExecutor(value=histogramResponse)
+    histogramExecutoroutputs = HistogramExecutorOutputs(outputData=outputData, outputImage=outputImage)
+    istogramExecutorResponse = HistogramExecutorResponse(outputs=histogramExecutoroutputs)
+    histogramExecutor = HistogramExecutor(value=istogramExecutorResponse)
     executor = ConfigExecutor(value=histogramExecutor)
     packageConfigs = PackageConfigs(executor=executor)
     package = PackageHelper(packageModel=PackageModel, packageConfigs=packageConfigs)
@@ -17,8 +17,8 @@ def build_response_histogram(context):
 
 def build_response_equalization(context):
     outputImage = OutputImage(value=context.image)
-    equalizationoutputs = EqualizationOutputs(outputImage=outputImage)
-    equalizationResponse = EqualizationResponse(outputs=equalizationoutputs)
+    equalizationoutputs = EqualizationExecutorOutputs(outputImage=outputImage)
+    equalizationResponse = EqualizationExecutorResponse(outputs=equalizationoutputs)
     equalizationExecutor = EqualizationExecutor(value=equalizationResponse)
     executor = ConfigExecutor(value=equalizationExecutor)
     packageConfigs = PackageConfigs(executor=executor)

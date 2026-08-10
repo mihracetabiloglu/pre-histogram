@@ -27,7 +27,6 @@ class HistogramExecutor(Component):
     def __init__(self, request, bootstrap):
         super().__init__(request, bootstrap)
         self.request.model = PackageModel(**(self.request.data))
-        self.initialize_request_data(request=request, bootstrap=bootstrap)
         self.image = self.request.get_param("inputImage")
         self.channelRed = self._read_bool_param("configChannelRed")
         self.channelGreen = self._read_bool_param("configChannelGreen")

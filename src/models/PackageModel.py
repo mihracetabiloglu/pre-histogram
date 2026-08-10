@@ -269,7 +269,7 @@ class EqualizationExecutorResponse(Response):
 
 
 class HistogramExecutor(Config):
-    name: Literal["Histogram"] = "Histogram"
+    name: Literal["HistogramExecutor"] = "HistogramExecutor"
     value: Union[HistogramExecutorRequest, HistogramExecutorResponse]
     type: Literal["object"] = "object"
     field: Literal["option"] = "option"
@@ -283,7 +283,7 @@ class HistogramExecutor(Config):
         }
 
 class EqualizationExecutor(Config):
-    name: Literal["Equalization"] = "Equalization"
+    name: Literal["EqualizationExecutor"] = "EqualizationExecutor"
     value: Union[EqualizationExecutorRequest, EqualizationExecutorResponse]
     type: Literal["object"] = "object"
     field: Literal["option"] = "option"

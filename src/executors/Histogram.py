@@ -69,7 +69,7 @@ class Histogram(Component):
         packageModel = build_response_histogram(context=self)
         return packageModel
 
-    def img2hist(self, image, channels=None, grayscale=False, pixmin=0, pixmax=255):
+    def img2hist(self.out, image, channels=None, grayscale=False, pixmin=0, pixmax=255):
         """
         Compute the histogram for specified channels in an image or for grayscale.
 

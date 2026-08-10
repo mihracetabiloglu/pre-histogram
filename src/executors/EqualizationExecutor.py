@@ -12,7 +12,7 @@ from components.PreHistogram.src.utils.response import build_response_equalizati
 from components.PreHistogram.src.models.PackageModel import PackageModel
 
 
-class Equalization(Component):
+class EqualizationExecutor(Component):
     """
     This class applies CLAHE (Contrast Limited Adaptive Histogram Equalization) to an image.
 

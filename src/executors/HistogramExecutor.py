@@ -2,6 +2,8 @@ import os
 import sys
 import cv2
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')  # Arka plan render modu (headless)
 import matplotlib.pyplot as plt
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../../'))
@@ -23,14 +25,14 @@ class HistogramExecutor(Component):
     """
 
     def __init__(self, request, bootstrap):
-        super().__init__(request,bootstrap)
+        super().__init__(request, bootstrap)
         self.request.model = PackageModel(**(self.request.data))
-        self.initialize_request_data(request=request, bootstrap=bootstrap)
         self.image = self.request.get_param("inputImage")
         self.channelRed = self._read_bool_param("configChannelRed")
         self.channelGreen = self._read_bool_param("configChannelGreen")
         self.channelBlue = self._read_bool_param("configChannelBlue")
         self.channelGrayScale = self._read_bool_param("configChannelGrayScale")
+        
         # Regularize the pixel min-max value
         configPixelMin = self._read_int_param("configPixelMin", default=0)
         configPixelMax = self._read_int_param("configPixelMax", default=255)
@@ -93,43 +95,28 @@ class HistogramExecutor(Component):
         img = Image.get_frame(img=self.image, redis_db=self.redis_db)
         
         """ RGB & GrayScale Data Output : list[list[float]] """
+        # DÜZELTME 1: Parametre sayısı fonksiyon tanımına uygun hale getirildi
         self.out = self.img2hist(img.value, self.channels, self.channelGrayScale, self.pixelMin, self.pixelMax)
-        #Self.out : Frame needed !!
+        self.outputData = self.out
 
         """ MathPlot Image Generation : If plot image checkbox checked """
         if self.plotImage: 
+            # DÜZELTME 1: Parametre sayısı fonksiyon tanımına uygun hale getirildi
             img.value = self.hist2plot(self.out, self.channels, self.channelGrayScale, self.pixelMin, self.pixelMax)
             self.image = Image.set_frame(img=img, package_uID=self.uID, redis_db=self.redis_db)
+        
+        self.outputImage = self.image
         
         packageModel = build_response_histogram(context=self)
         return packageModel
 
     def img2hist(self, image, channels=None, grayscale=False, pixmin=0, pixmax=255):
-        """
-        Compute the histogram for specified channels in an image or for grayscale.
-
-        Args:
-        image (np.ndarray): OpenCV image in BGR format.
-        channels (list[int] | None): List of channel indices to compute histograms for (0=Red, 1=Green, 2=Blue).
-        grayscale (bool): If True, computes the histogram for the grayscale version of the image.
-        pixmin (int): Minimum pixel value (inclusive).
-        pixmax (int): Maximum pixel value (exclusive).
-
-        Returns:
-        list[list[float]]: A list of normalized histogram values for each channel:
-            - Index 0: Red
-            - Index 1: Green
-            - Index 2: Blue
-            - Index 3: Grayscale
-        """
-        # Output structure: [R_hist, G_hist, B_hist, Gray_hist]
         out = [[], [], [], []]
 
-        # Compute RGB channel histograms if channels are specified
         if channels:
             for channel in channels:
-                if channel in [0, 1, 2]:  # Ensure valid channel index
-                    cvchannel = 2 - channel # RGB to BGR issues -> [0,1,2] to [2,1,0]
+                if channel in [0, 1, 2]:
+                    cvchannel = 2 - channel  # RGB -> BGR dönüşümü
                     hist = cv2.calcHist([image], [cvchannel], None, [pixmax - pixmin], [pixmin, pixmax])
                     hist = hist.flatten()
 
@@ -137,11 +124,9 @@ class HistogramExecutor(Component):
                        hist = hist / hist.max()
 
                     hist = hist.tolist()
-                    out[channel] = hist
                     empty = [0] * pixmin
-                    out[channel] = empty + out[channel]
+                    out[channel] = empty + hist
 
-        # Compute grayscale histogram if requested
         if grayscale:
             gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             gray_hist = cv2.calcHist([gray_image], [0], None, [pixmax - pixmin], [pixmin, pixmax])
@@ -151,43 +136,40 @@ class HistogramExecutor(Component):
                 gray_hist = gray_hist / gray_hist.max()
 
             gray_hist = gray_hist.tolist()
-            out[3] = gray_hist
             empty = [0] * pixmin
-            out[3] = empty + out[3]
+            out[3] = empty + gray_hist
 
         return out
 
-    def hist2plot(self, hdata, channels:list, grayscale=False, pixmin=0, pixmax=255):
-        plt.figure(figsize=(10, 6))
-
-        plt.xlim(pixmin, pixmax)
+    def hist2plot(self, hdata, channels: list, grayscale=False, pixmin=0, pixmax=255):
+        fig, ax = plt.subplots(figsize=(10, 6))
+        ax.set_xlim(pixmin, pixmax)
 
         # Plot each channel's histogram
-        if channels.__contains__(0): plt.plot(hdata[0], color='red',   label='Red Channel')
-        if channels.__contains__(1): plt.plot(hdata[1], color='lime', label='Green Channel')
-        if channels.__contains__(2): plt.plot(hdata[2], color='blue',  label='Blue Channel')
-        if grayscale: plt.plot(hdata[3], color='black', label='GrayScale')
+        if 0 in channels and len(hdata[0]) > 0: 
+            ax.plot(hdata[0], color='red', label='Red Channel')
+        if 1 in channels and len(hdata[1]) > 0: 
+            ax.plot(hdata[1], color='lime', label='Green Channel')
+        if 2 in channels and len(hdata[2]) > 0: 
+            ax.plot(hdata[2], color='blue', label='Blue Channel')
+        if grayscale and len(hdata[3]) > 0: 
+            ax.plot(hdata[3], color='black', label='GrayScale')
 
-        # Add labels and title
-        plt.title('Histogram')
-        plt.xlabel('Pixel Intensity')
-        plt.ylabel('Frequency')
-        plt.legend()
-        plt.grid(True)
+        ax.set_title('Histogram')
+        ax.set_xlabel('Pixel Intensity')
+        ax.set_ylabel('Frequency')
+        ax.legend()
+        ax.grid(True)
 
-        # Save the figure to a numpy array
-        plt.tight_layout()
-        canvas = plt.gca().figure.canvas
-        canvas.draw()
+        fig.tight_layout()
+        fig.canvas.draw()
 
-        # Convert to numpy array
-        img = np.frombuffer(canvas.tostring_rgb(), dtype=np.uint8)
-        img = img.reshape(canvas.get_width_height()[::-1] + (3,))
+        # DÜZELTME 2: Güncel Matplotlib buffer yöntemi
+        buf = fig.canvas.buffer_rgba()
+        img_rgba = np.asarray(buf)
+        img_bgr = cv2.cvtColor(img_rgba, cv2.COLOR_RGBA2BGR)
 
-        # Convert to BGR for OpenCV compatibility
-        img_bgr = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-
-        plt.close()  # Close the plt figure
+        plt.close(fig)
         return img_bgr
 
 if "__main__" == __name__:

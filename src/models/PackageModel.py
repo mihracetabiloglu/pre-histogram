@@ -217,11 +217,11 @@ class ConfigTileGridSize(Config):
         title = "Tile Grid Size"
 
 
-class HistogramInputs(Inputs):
+class HistogramExecutorInputs(Inputs):
     inputImage: InputImage
 
 
-class HistogramConfigs(Configs):
+class HistogramExecutorConfigs(Configs):
     configChannelRed : ConfigChannelRed
     configChannelGreen : ConfigChannelGreen
     configChannelBlue : ConfigChannelBlue
@@ -230,47 +230,47 @@ class HistogramConfigs(Configs):
     configPixelMax : ConfigPixelMax
     configPlotImage : ConfigPlotImage
 
-class HistogramOutputs(Outputs):
+class HistogramExecutorOutputs(Outputs):
     outputData: OutputData
     outputImage: OutputImage
 
-class HistogramRequest(Request):
-    inputs: Optional[HistogramInputs]
-    configs: HistogramConfigs
+class HistogramExecutorRequest(Request):
+    inputs: Optional[HistogramExecutorInputs]
+    configs: HistogramExecutorConfigs
     class Config:
         json_schema_extra = {
             "target": "configs"
         }
 
-class HistogramResponse(Response):
-    outputs: HistogramOutputs
+class HistogramExecutorResponse(Response):
+    outputs: HistogramExecutorOutputs
 
 
-class EqualizationInputs(Inputs):
+class EqualizationExecutorInputs(Inputs):
     inputImage: InputImage
 
-class EqualizationConfigs(Configs):
+class EqualizationExecutorConfigs(Configs):
     configClipLimit: ConfigClipLimit
     configTileGridSize: ConfigTileGridSize
 
-class EqualizationOutputs(Outputs):
+class EqualizationExecutorOutputs(Outputs):
     outputImage: OutputImage
 
-class EqualizationRequest(Request):
-    inputs: Optional[EqualizationInputs]
-    configs: EqualizationConfigs
+class EqualizationExecutorRequest(Request):
+    inputs: Optional[EqualizationExecutorInputs]
+    configs: EqualizationExecutorConfigs
     class Config:
         json_schema_extra = {
             "target": "configs"
         }
 
-class EqualizationResponse(Response):
-    outputs: EqualizationOutputs
+class EqualizationExecutorResponse(Response):
+    outputs: EqualizationExecutorOutputs
 
 
 class HistogramExecutor(Config):
-    name: Literal["Histogram"] = "Histogram"
-    value: Union[HistogramRequest, HistogramResponse]
+    name: Literal["HistogramExecutor"] = "HistogramExecutor"
+    value: Union[HistogramExecutorRequest, HistogramExecutorResponse]
     type: Literal["object"] = "object"
     field: Literal["option"] = "option"
 
@@ -283,8 +283,8 @@ class HistogramExecutor(Config):
         }
 
 class EqualizationExecutor(Config):
-    name: Literal["Equalization"] = "Equalization"
-    value: Union[EqualizationRequest, EqualizationResponse]
+    name: Literal["EqualizationExecutor"] = "EqualizationExecutor"
+    value: Union[EqualizationExecutorRequest, EqualizationExecutorResponse]
     type: Literal["object"] = "object"
     field: Literal["option"] = "option"
     class Config:

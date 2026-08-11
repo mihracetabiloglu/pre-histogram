@@ -3,7 +3,7 @@ import sys
 import cv2
 import numpy as np
 import matplotlib
-matplotlib.use('Agg')  # Arka plan render modu (headless)
+matplotlib.use('Agg')  
 import matplotlib.pyplot as plt
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../../'))
@@ -95,13 +95,13 @@ class HistogramExecutor(Component):
         img = Image.get_frame(img=self.image, redis_db=self.redis_db)
         
         """ RGB & GrayScale Data Output : list[list[float]] """
-        # DÜZELTME 1: Parametre sayısı fonksiyon tanımına uygun hale getirildi
+        
         self.out = self.img2hist(img.value, self.channels, self.channelGrayScale, self.pixelMin, self.pixelMax)
         self.outputData = self.out
 
         """ MathPlot Image Generation : If plot image checkbox checked """
         if self.plotImage: 
-            # DÜZELTME 1: Parametre sayısı fonksiyon tanımına uygun hale getirildi
+            
             img.value = self.hist2plot(self.out, self.channels, self.channelGrayScale, self.pixelMin, self.pixelMax)
             self.image = Image.set_frame(img=img, package_uID=self.uID, redis_db=self.redis_db)
         
@@ -164,7 +164,6 @@ class HistogramExecutor(Component):
         fig.tight_layout()
         fig.canvas.draw()
 
-        # DÜZELTME 2: Güncel Matplotlib buffer yöntemi
         buf = fig.canvas.buffer_rgba()
         img_rgba = np.asarray(buf)
         img_bgr = cv2.cvtColor(img_rgba, cv2.COLOR_RGBA2BGR)

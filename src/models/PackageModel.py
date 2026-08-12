@@ -372,7 +372,7 @@ class ContrastEnhancementExecutor(Config):
  
 class ConfigExecutor(Config):
     name: Literal["ConfigExecutor"] = "ConfigExecutor"
-    value: Union[HistogramExecutor,EqualizationExecutor]
+    value: Union[HistogramExecutor,EqualizationExecutor, ContrastEnhancementExecutor]
     type: Literal["executor"] = "executor"
     field: Literal["dependentDropdownlist"] = "dependentDropdownlist"
 

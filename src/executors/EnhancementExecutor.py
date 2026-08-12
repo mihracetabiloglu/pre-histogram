@@ -12,7 +12,7 @@ from components.PreHistogram.src.utils.response import build_response_contrast_e
 from components.PreHistogram.src.models.PackageModel import PackageModel
 
 
-class ContrastEnhancementExecutor(Component):
+class EnhancementExecutor(Component):
     """
     This class applies histogram normalization (linear stretching) similar to 
     GIMP's Auto Levels algorithm. It finds the min/max pixel values in the 

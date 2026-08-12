@@ -216,7 +216,47 @@ class ConfigTileGridSize(Config):
     class Config:
         title = "Tile Grid Size"
 
-
+class ConfigContrastClipLimit(Config):
+    name: Literal["contrastClipLimit"] = "contrastClipLimit"
+    value: int = Field(ge=0, le=50, default=0)
+    type: Literal["number"] = "number"
+    field: Literal["textInput"] = "textInput"
+    placeHolder: Literal["[0-50]"] = "[0-50]"
+    class Config:
+        title = "Clip Limit (%)"
+ 
+class ConfigContrastMultiplier(Config):
+    name: Literal["contrastMultiplier"] = "contrastMultiplier"
+    value: float = Field(ge=0.1, le=5.0, default=1.0)
+    type: Literal["number"] = "number"
+    field: Literal["textInput"] = "textInput"
+    placeHolder: Literal["[0.1-5.0]"] = "[0.1-5.0]"
+    class Config:
+        title = "Contrast Multiplier"
+ 
+class ConfigNormalizeBrightnessTrue(Config):
+    name: Literal["configNormalizeBrightnessTrue"] = "configNormalizeBrightnessTrue"
+    value: Literal["True"] = "True"
+    type: Literal["string"] = "string"
+    field: Literal["option"] = "option"
+    class Config:
+        title = "Enable"
+ 
+class ConfigNormalizeBrightnessFalse(Config):
+    name: Literal["configNormalizeBrightnessFalse"] = "configNormalizeBrightnessFalse"
+    value: Literal["False"] = "False"
+    type: Literal["string"] = "string"
+    field: Literal["option"] = "option"
+    class Config:
+        title = "Disable"
+ 
+class ConfigNormalizeBrightness(Config):
+    name: Literal["configNormalizeBrightness"] = "configNormalizeBrightness"
+    value: Union[ConfigNormalizeBrightnessTrue, ConfigNormalizeBrightnessFalse]
+    type: Literal["object"] = "object"
+    field: Literal["dropdownlist"] = "dropdownlist"
+    class Config:
+        title = "Normalize Brightness"
 class HistogramExecutorInputs(Inputs):
     inputImage: InputImage
 
@@ -267,6 +307,29 @@ class EqualizationExecutorRequest(Request):
 class EqualizationExecutorResponse(Response):
     outputs: EqualizationExecutorOutputs
 
+ 
+class ContrastEnhancementExecutorInputs(Inputs):
+    inputImage: InputImage
+ 
+class ContrastEnhancementExecutorConfigs(Configs):
+    configContrastClipLimit: ConfigContrastClipLimit
+    configContrastMultiplier: ConfigContrastMultiplier
+    configNormalizeBrightness: ConfigNormalizeBrightness
+ 
+class ContrastEnhancementExecutorOutputs(Outputs):
+    outputImage: OutputImage
+ 
+class ContrastEnhancementExecutorRequest(Request):
+    inputs: Optional[ContrastEnhancementExecutorInputs]
+    configs: ContrastEnhancementExecutorConfigs
+    class Config:
+        json_schema_extra = {
+            "target": "configs"
+        }
+ 
+class ContrastEnhancementExecutorResponse(Response):
+    outputs: ContrastEnhancementExecutorOutputs
+ 
 
 class HistogramExecutor(Config):
     name: Literal["HistogramExecutor"] = "HistogramExecutor"
@@ -294,7 +357,19 @@ class EqualizationExecutor(Config):
                 "value": 0
             }
         }
-
+class ContrastEnhancementExecutor(Config):
+    name: Literal["ContrastEnhancementExecutor"] = "ContrastEnhancementExecutor"
+    value: Union[ContrastEnhancementExecutorRequest, ContrastEnhancementExecutorResponse]
+    type: Literal["object"] = "object"
+    field: Literal["option"] = "option"
+    class Config:
+        title = "Contrast Enhancement"
+        json_schema_extra = {
+            "target": {
+                "value": 0
+            }
+        }
+ 
 class ConfigExecutor(Config):
     name: Literal["ConfigExecutor"] = "ConfigExecutor"
     value: Union[HistogramExecutor,EqualizationExecutor]

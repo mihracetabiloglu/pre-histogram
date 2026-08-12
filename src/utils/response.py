@@ -1,6 +1,7 @@
 
 from sdks.novavision.src.helper.package import PackageHelper
-from components.PreHistogram.src.models.PackageModel import PackageModel, PackageConfigs, HistogramExecutorOutputs, HistogramExecutorResponse, HistogramExecutor, EqualizationExecutor, EqualizationExecutorResponse, EqualizationExecutorOutputs, ConfigExecutor, OutputData, OutputImage
+from components.PreHistogram.src.models.PackageModel import PackageModel, PackageConfigs, HistogramExecutorOutputs, HistogramExecutorResponse, HistogramExecutor, EqualizationExecutor, EqualizationExecutorResponse, EqualizationExecutorOutputs, ConfigExecutor, OutputData, OutputImage, ContrastEnhancementExecutor, ContrastEnhancementExecutorResponse, ContrastEnhancementExecutorOutputs
+
 
 def build_response_histogram(context):
     outputData = OutputData(value=context.out)
@@ -21,6 +22,18 @@ def build_response_equalization(context):
     equalizationResponse = EqualizationExecutorResponse(outputs=equalizationoutputs)
     equalizationExecutor = EqualizationExecutor(value=equalizationResponse)
     executor = ConfigExecutor(value=equalizationExecutor)
+    packageConfigs = PackageConfigs(executor=executor)
+    package = PackageHelper(packageModel=PackageModel, packageConfigs=packageConfigs)
+    packageModel = package.build_model(context)
+    return packageModel
+
+
+def build_response_contrast_enhancement(context):
+    outputImage = OutputImage(value=context.image)
+    contrastEnhancementOutputs = ContrastEnhancementExecutorOutputs(outputImage=outputImage)
+    contrastEnhancementResponse = ContrastEnhancementExecutorResponse(outputs=contrastEnhancementOutputs)
+    contrastEnhancementExecutor = ContrastEnhancementExecutor(value=contrastEnhancementResponse)
+    executor = ConfigExecutor(value=contrastEnhancementExecutor)
     packageConfigs = PackageConfigs(executor=executor)
     package = PackageHelper(packageModel=PackageModel, packageConfigs=packageConfigs)
     packageModel = package.build_model(context)

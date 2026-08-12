@@ -308,27 +308,27 @@ class EqualizationExecutorResponse(Response):
     outputs: EqualizationExecutorOutputs
 
  
-class ContrastEnhancementExecutorInputs(Inputs):
+class EnhancementExecutorInputs(Inputs):
     inputImage: InputImage
  
-class ContrastEnhancementExecutorConfigs(Configs):
+class EnhancementExecutorConfigs(Configs):
     configContrastClipLimit: ConfigContrastClipLimit
     configContrastMultiplier: ConfigContrastMultiplier
     configNormalizeBrightness: ConfigNormalizeBrightness
  
-class ContrastEnhancementExecutorOutputs(Outputs):
+class EnhancementExecutorOutputs(Outputs):
     outputImage: OutputImage
  
-class ContrastEnhancementExecutorRequest(Request):
-    inputs: Optional[ContrastEnhancementExecutorInputs]
-    configs: ContrastEnhancementExecutorConfigs
+class EnhancementExecutorRequest(Request):
+    inputs: Optional[EnhancementExecutorInputs]
+    configs: EnhancementExecutorConfigs
     class Config:
         json_schema_extra = {
             "target": "configs"
         }
  
-class ContrastEnhancementExecutorResponse(Response):
-    outputs: ContrastEnhancementExecutorOutputs
+class EnhancementExecutorResponse(Response):
+    outputs: EnhancementExecutorOutputs
  
 
 class HistogramExecutor(Config):
@@ -357,13 +357,13 @@ class EqualizationExecutor(Config):
                 "value": 0
             }
         }
-class ContrastEnhancementExecutor(Config):
-    name: Literal["ContrastEnhancementExecutor"] = "ContrastEnhancementExecutor"
-    value: Union[ContrastEnhancementExecutorRequest, ContrastEnhancementExecutorResponse]
+class EnhancementExecutor(Config):
+    name: Literal["EnhancementExecutor"] = "EnhancementExecutor"
+    value: Union[EnhancementExecutorRequest, EnhancementExecutorResponse]
     type: Literal["object"] = "object"
     field: Literal["option"] = "option"
     class Config:
-        title = "Contrast Enhancement"
+        title = "Enhancement"
         json_schema_extra = {
             "target": {
                 "value": 0
@@ -372,7 +372,7 @@ class ContrastEnhancementExecutor(Config):
  
 class ConfigExecutor(Config):
     name: Literal["ConfigExecutor"] = "ConfigExecutor"
-    value: Union[HistogramExecutor,EqualizationExecutor, ContrastEnhancementExecutor]
+    value: Union[HistogramExecutor,EqualizationExecutor, EnhancementExecutor]
     type: Literal["executor"] = "executor"
     field: Literal["dependentDropdownlist"] = "dependentDropdownlist"
 
